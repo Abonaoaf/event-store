@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة قبل الحدث | للمشتركين</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #4338ca; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --bg: #f1f5f9; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        
+        /* تصميم الشعار والأخبار */
+        .brand-logo { width: 120px; height: auto; margin-bottom: 10px; border-radius: 20px; }
+        .news-bar { background: #fff; width: 100%; max-width: 420px; padding: 8px; border-radius: 50px; margin-bottom: 15px; border: 1px solid #e2e8f0; font-size: 0.85rem; color: var(--primary); overflow: hidden; }
+
+        /* حالة الاشتراك */
+        .status-badge { width: 100%; padding: 8px; text-align: center; font-weight: bold; font-size: 0.9rem; color: white; border-radius: 12px 12px 0 0; }
+        .status-active { background: var(--success); }
+        .status-expired { background: var(--danger); }
+
+        /* بطاقة العميل */
+        .client-card { background: white; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); width: 100%; max-width: 420px; overflow: hidden; display: none; }
+        .card-header { background: #fff; padding: 20px; text-align: center; border-bottom: 1px solid #f1f5f9; }
+        .card-header h2 { margin: 5px 0; color: #1e293b; font-size: 1.3rem; }
+        
+        .info-grid { padding: 20px; display: grid; gap: 12px; }
+        .info-item { background: #f8fafc; padding: 12px; border-radius: 15px; border: 1px solid #edf2f7; display: flex; justify-content: space-between; align-items: center; }
+        .info-label { color: #64748b; font-size: 0.75rem; font-weight: bold; }
+        .info-value { font-weight: bold; color: #334155; font-size: 0.95rem; }
+        
+        /* عداد الوقت */
+        .timer-box { background: #f1f5f9; margin: 15px; padding: 15px; border-radius: 20px; text-align: center; }
+        .timer-display { display: flex; justify-content: center; gap: 8px; margin-top: 8px; }
+        .unit { background: white; padding: 5px; border-radius: 8px; min-width: 45px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .unit b { display: block; color: var(--primary); font-size: 1.1rem; }
+        .unit span { font-size: 0.6rem; color: #94a3b8; }
+
+        /* أزرار الخدمات */
+        .services-grid { width: 100%; max-width: 420px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .btn-service { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 0.85rem; color: white; transition: 0.3s; }
+        .btn-store { background: var(--primary); grid-column: 1 / -1; flex-direction: row; gap: 10px; }
+        .btn-wa { background: #25d366; }
+        .btn-channel { background: #008069; }
+        
+        /* لوحة التحكم */
+        #adminArea { width: 100%; max-width: 1000px; display: none; }
+        .copy-btn { color: var(--primary); cursor: pointer; padding: 5px; }
+    </style>
+</head>
+<body>
+
+    <img src="https://abonaoaf.github.io/apps/hdh.PNG" class="brand-logo" alt="Logo">
+
+    <div id="newsBar" class="news-bar" style="display:none;">
+        <marquee id="newsText" behavior="scroll" direction="right">مرحباً بك في منصة قبل الحدث التقنية..</marquee>
+    </div>
+
+    <div id="clientView" class="client-card">
+        <div id="statusBadge" class="status-badge">جاري التحقق...</div>
+        <div class="card-header">
+            <h2 id="v-name"></h2>
+            <span id="v-phone" style="color:#64748b; font-size:0.8rem;"></span>
+        </div>
+        <div class="info-grid">
+            <div class="info-item">
+                <div><span class="info-label">اسم المستخدم</span><br><span id="v-user" class="info-value"></span></div>
+                <i class="far fa-copy copy-btn" onclick="copyText('v-user')"></i>
+            </div>
+            <div class="info-item">
+                <div><span class="info-label">كلمة السر</span><br><span id="v-pass" class="info-value"></span></div>
+                <i class="far fa-copy copy-btn" onclick="copyText('v-pass')"></i>
+            </div>
+            <div class="info-item">
+                <div><span class="info-label">رابط السيرفر</span><br><span id="v-host" class="info-value"></span></div>
+                <i class="far fa-copy copy-btn" onclick="copyText('v-host')"></i>
+            </div>
+        </div>
+
+        <div class="timer-box">
+            <span class="info-label">الوقت المتبقي لانتهاء اشتراكك</span>
+            <div id="timer" class="timer-display"></div>
+        </div>
+    </div>
+
+    <div id="servicesArea" class="services-grid" style="display:none;">
+        <a href="https://abonaoaf.github.io/apps/" class="btn-service btn-store">
+            <i class="fas fa-store"></i> متجر تطبيقات قبل الحدث
+        </a>
+        <a href="https://wa.me/966594393012" class="btn-service btn-wa">
+            <i class="fab fa-whatsapp"></i> الدعم الفني
+        </a>
+        <a href="https://whatsapp.com/channel/..." class="btn-service btn-channel">
+            <i class="fas fa-bullhorn"></i> قناة الواتساب
+        </a>
+    </div>
+
+    <div id="adminArea">
+        </div>
+
+<script>
+    const BIN_ID = '69ccd25636566621a86b0b49';
+    const API_KEY = '$2a$10$tF3fZ9rbdTzLIljwr83BlOtuLCKngwBUbeK9//NpVH8Mwkfh4GTmu';
+    let fullData = { clients: [], apps: [], news: "مرحباً بك في منصة قبل الحدث!" };
+
+    async function init() {
+        try {
+            // جلب البيانات من السحابة
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': API_KEY } });
+            const data = await res.json();
+            fullData = data.record;
+
+            const params = new URLSearchParams(window.location.search);
+            const user = params.get('user');
+
+            if (user) {
+                showClient(decodeURIComponent(user));
+            } else {
+                // إظهار لوحة التحكم (كود الإدارة هنا)
+            }
+        } catch (e) { alert("خطأ في الاتصال"); }
+    }
+
+    function showClient(name) {
+        const c = fullData.clients.find(x => x.name === name);
+        if (!c) return;
+
+        document.getElementById('clientView').style.display = 'block';
+        document.getElementById('servicesArea').style.display = 'grid';
+        document.getElementById('newsBar').style.display = 'block';
+        
+        document.getElementById('v-name').innerText = "مرحباً: " + c.name;
+        document.getElementById('v-user').innerText = c.plan;
+        document.getElementById('v-pass').innerText = c.pass;
+        document.getElementById('v-host').innerText = c.link || "سيرفر خاص";
+        document.getElementById('newsText').innerText = fullData.news || "مرحباً بك في المنصة";
+
+        updateStatus(c.expiry);
+        setInterval(() => { updateTimer(c.expiry); }, 1000);
+    }
+
+    function updateStatus(expiry) {
+        const isExpired = new Date(expiry) < new Date();
+        const badge = document.getElementById('statusBadge');
+        if (isExpired) {
+            badge.innerText = "الاشتراك منتهي (يرجى التجديد)";
+            badge.className = "status-badge status-expired";
+        } else {
+            badge.innerText = "اشتراكك ساري ومفعّل ✅";
+            badge.className = "status-badge status-active";
+        }
+    }
+
+    function updateTimer(expiry) {
+        const diff = new Date(expiry) - new Date();
+        if (diff <= 0) { document.getElementById('timer').innerHTML = "منتهي"; return; }
+        
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const m = Math.floor((diff / (1000 * 60)) % 60);
+        const s = Math.floor((diff / 1000) % 60);
+
+        document.getElementById('timer').innerHTML = `
+            <div class="unit"><b>${d}</b><span>يوم</span></div>
+            <div class="unit"><b>${h}</b><span>ساعة</span></div>
+            <div class="unit"><b>${m}</b><span>دقيقة</span></div>
+            <div class="unit"><b>${s}</b><span>ثانية</span></div>
+        `;
+    }
+
+    function copyText(id) {
+        navigator.clipboard.writeText(document.getElementById(id).innerText);
+        alert("تم النسخ بنجاح");
+    }
+
+    init();
+</script>
+</body>
+</html>
+
