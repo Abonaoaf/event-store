@@ -31,9 +31,9 @@
         .date-month { font-size: 0.75rem; color: #666; font-weight: 600; }
         #v-name { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
 
-        /* التنسيق الجديد بطلبك */
         .welcome-msg { margin-top: 15px; font-size: 0.95rem; color: #4a5568; line-height: 1.6; }
-        .welcome-family { font-weight: 800; color: #ff0000; display: block; margin-bottom: 5px; font-size: 1.1rem; }
+        /* هنا تم تعديل التباعد بطلبك (margin-bottom: 15px) */
+        .welcome-family { font-weight: 800; color: #ff0000; display: block; margin-bottom: 15px; font-size: 1.1rem; }
         .dashboard-title { margin-top: 15px; display: block; font-weight: bold; color: var(--primary); font-size: 0.9rem; text-decoration: underline; }
 
         .info-body { padding: 20px; }
@@ -91,7 +91,7 @@
         </div>
         <h2 id="v-name"></h2>
         
-        <div class="welcome-msg">
+        <div class="welcome-msg🤝">
             <span class="welcome-family">في أسرة فولتشر</span>
             نحن سعداء بانضمامك إلينا ونتطلع لخدمتك بأفضل ما لدينا
             <span class="dashboard-title">لوحة معلوماتك الشخصية</span>
@@ -246,11 +246,11 @@
         
         if (remainingTime <= 0) { 
             bar.style.backgroundColor="var(--danger)"; 
-            txt.innerText="❌ اشتراك منتهي"; 
+            txt.innerText="❌ اشتراكك منتهي"; 
             txt.style.color="var(--danger)";
         } else { 
             bar.style.backgroundColor="var(--success)"; 
-            txt.innerText="✅ اشتراك ساري ومفعل"; 
+            txt.innerText="✅ اشتراكك ساري ومفعل"; 
             txt.style.color="var(--success)";
         }
     }
@@ -309,35 +309,4 @@
             start: document.getElementById('in-start').value,
             expiry: document.getElementById('in-expiry').value
         };
-        if(!data.name || !data.expiry) return alert("أكمل البيانات!");
-        
-        if (idx === -1) fullData.clients.push(data); 
-        else fullData.clients[idx] = data;
-        
-        await syncToCloud();
-        renderClients(); closeModal();
-    }
-
-    function copyClientUrl(userName) {
-        const url = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(userName)}`;
-        navigator.clipboard.writeText(url); alert("تم نسخ رابط العميل بنجاح");
-    }
-
-    function editClient(i) {
-        openModal();
-        document.getElementById('editIndex').value = i;
-        ['name','phone','plan','pass','link','start','expiry'].forEach(id => {
-            document.getElementById('in-'+id).value = fullData.clients[i][id] || '';
-        });
-    }
-
-    async function deleteClient(i) { if(confirm("هل أنت متأكد من الحذف؟")) { fullData.clients.splice(i,1); await syncToCloud(); renderClients(); } }
-    function openModal() { document.getElementById('editIndex').value = "-1"; document.getElementById('modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
-    function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم النسخ!"); }
-
-    loadData();
-</script>
-</body>
-</html>
+   
