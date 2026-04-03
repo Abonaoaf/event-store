@@ -96,7 +96,6 @@
         <div class="info-row"><div><span class="label">اسم المستخدم</span><br><span id="v-plan" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-plan')"><i class="far fa-copy"></i></button></div>
         <div class="info-row"><div><span class="label">كلمة السر</span><br><span id="v-pass" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-pass')"><i class="far fa-copy"></i></button></div>
         <div class="info-row"><div><span class="label">رابط الدخول</span><br><span id="v-link" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-link')"><i class="far fa-copy"></i></button></div>
-        
         <div class="timer-section"><span class="label">الوقت المتبقي للانتهاء</span><div id="timer" class="timer-display"></div></div>
         <a href="https://abonaoaf.github.io/az/" class="btn-contact" style="background: #4338ca; border: 2px solid #fff;">
             <i class="fas fa-th-large"></i> متجر تطبيقات فولتشر 
@@ -200,14 +199,14 @@
         document.getElementById('v-phone').innerText = c.phone || 'غير مسجل';
         document.getElementById('v-plan').innerText = c.plan;
         document.getElementById('v-pass').innerText = c.pass;
-        // تحديث قيمة الرابط في واجهة العميل
         document.getElementById('v-link').innerText = c.link || 'https://vultr.com/login';
         document.getElementById('v-start').innerText = c.start;
         document.getElementById('v-end').innerText = c.expiry;
         updateStatusAndProgress(c.start, c.expiry);
         if (!window.timerInterval) {
             window.timerInterval = setInterval(() => { 
-                document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry)); 
+                const time = calculateTime(c.expiry);
+                document.getElementById('timer').innerHTML = getTimeHTML(time); 
                 updateStatusAndProgress(c.start, c.expiry);
             }, 1000);
         }
@@ -297,4 +296,4 @@
         });
     }
 
-    async function deleteClient(i) { if(confirm("هل أنت متأكد 
+    async function deleteClient(i) { if(confirm("هل أنت متأكد من الحذف؟")) { full
