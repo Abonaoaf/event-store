@@ -7,232 +7,107 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { 
-            /* ألوان مستوحاة من اللوجو الخاص بك */
+            /* الألوان الجديدة المستوحاة من شعارك */
             --brand-orange: #ff6b35;
-            --brand-yellow: #ffb627;
             --brand-red: #e63946;
             --dark-blue: #1d3557;
-            --soft-bg: #f8f9fa;
+            --bg: #f8f9fa;
             --success: #2ec4b6;
             --warning: #ffb627;
             --danger: #e63946;
         }
 
-        body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--soft-bg);
-            background-image: radial-gradient(circle at top right, rgba(255, 107, 53, 0.05), transparent),
-                              radial-gradient(circle at bottom left, rgba(29, 53, 87, 0.05), transparent);
-            margin: 0; 
-            padding: 20px; 
-            display: flex; 
-            justify-content: center; 
-            min-height: 100vh; 
-            color: var(--dark-blue); 
-        }
-
-        /* تنسيق البطاقة العصري */
-        .client-view { 
-            background: rgba(255, 255, 255, 0.95); 
-            border-radius: 30px; 
-            box-shadow: 0 20px 60px rgba(29, 53, 87, 0.1); 
-            width: 100%; 
-            max-width: 420px; 
-            overflow: hidden; 
-            display: none; 
-            align-self: center; 
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-            position: relative; 
-        }
-
-        /* هيدر بتدرج لوني متناسق مع اللوجو */
-        .client-header { 
-            background: linear-gradient(135deg, var(--brand-orange), var(--brand-red)); 
-            color: white; 
-            padding: 35px 25px; 
-            text-align: center; 
-            position: relative;
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
-        }
-
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; color: var(--dark-blue); }
+        
+        /* شريط الحالة واللوجو */
+        .status-bar { height: 6px; width: 100%; position: absolute; top: 0; left: 0; }
+        .status-msg { font-size: 0.8rem; font-weight: bold; margin-bottom: 20px; padding: 6px 15px; border-radius: 50px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        
+        /* مربع اللوجو الأبيض (طلبك الأساسي) */
         .brand-logo { 
             max-width: 140px; 
             height: auto; 
             display: block; 
             margin: 0 auto 15px auto; 
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+            background: white; /* المربع الأبيض */
+            padding: 10px;
             border-radius: 20px;
-            background: white;
-            padding: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .status-bar { height: 6px; width: 100%; position: absolute; top: 0; left: 0; }
-        
-        .status-msg { 
-            font-size: 0.85rem; 
-            font-weight: 800; 
-            margin-bottom: 20px; 
-            padding: 8px 18px; 
-            border-radius: 50px; 
-            display: inline-block;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .info-body { padding: 25px; }
-
-        /* صفوف المعلومات بتصميم نظيف */
-        .info-row { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            margin-bottom: 12px; 
-            background: white; 
-            padding: 12px 18px; 
-            border-radius: 18px; 
-            border: 1px solid #f1f3f5;
-            transition: transform 0.2s;
-        }
-        .info-row:hover { transform: translateY(-2px); border-color: var(--brand-orange); }
-
-        .label { color: #adb5bd; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
-        .value { font-weight: 700; color: var(--dark-blue); font-size: 0.95rem; }
-
-        .copy-btn { 
-            background: #f8f9fa; 
-            border: none; 
-            color: var(--brand-orange); 
-            cursor: pointer; 
-            padding: 8px; 
-            border-radius: 10px; 
-            transition: 0.3s;
-        }
-        .copy-btn:hover { background: var(--brand-orange); color: white; }
-
-        /* قسم المؤقت بتصميم دائري عصري */
-        .timer-section { 
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef); 
-            padding: 20px; 
-            border-radius: 24px; 
-            text-align: center; 
-            margin: 20px 0; 
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-
-        .timer-display { display: flex; justify-content: center; gap: 8px; margin-top: 12px; direction: ltr; }
-        .time-unit { 
-            background: white; 
-            padding: 10px 5px; 
-            border-radius: 15px; 
-            min-width: 48px; 
-            box-shadow: 0 8px 16px rgba(0,0,0,0.04); 
-        }
-        .time-num { display: block; font-size: 1.1rem; font-weight: 800; color: var(--brand-red); }
-        .time-lab { font-size: 0.6rem; color: #6c757d; font-weight: bold; }
-
-        /* أزرار التواصل بتصميم "كابسل" */
-        .btn-contact { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-            width: 100%; 
-            padding: 14px; 
-            border-radius: 18px; 
-            text-decoration: none; 
-            font-weight: 700; 
-            margin-bottom: 12px; 
-            color: white; 
-            font-size: 0.95rem; 
-            transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        }
-        .btn-contact:hover { transform: scale(1.02); opacity: 0.9; }
-
-        /* الإدارة */
-        .admin-panel { width: 100%; max-width: 1100px; display: none; }
-        .admin-header { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .admin-top-bar { display: flex; justify-content: space-between; align-items: center; }
-        .logo-uploader { 
-            background: #fff5f2; 
-            padding: 15px; 
-            border-radius: 18px; 
-            border: 2px dashed var(--brand-orange); 
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .btn-add { background: var(--brand-orange); color: white; border: none; padding: 12px 25px; border-radius: 15px; cursor: pointer; font-weight: bold; }
         .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--brand-orange); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .modal-content { background: white; padding: 35px; border-radius: 30px; width: 90%; max-width: 450px; }
-        input { width: 100%; padding: 14px; border: 1px solid #e9ecef; border-radius: 15px; margin-bottom: 10px; outline: none; }
-        input:focus { border-color: var(--brand-orange); }
+        .timer-display { display: flex; justify-content: center; gap: 5px; margin-top: 10px; flex-wrap: wrap; direction: ltr; }
+        .time-unit { background: white; padding: 8px 4px; border-radius: 12px; border: 1px solid #e9ecef; min-width: 45px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); text-align: center; }
+        .time-num { display: block; font-size: 1.1rem; font-weight: bold; color: var(--brand-red); line-height: 1; }
+        .time-lab { font-size: 0.6rem; color: #6c757d; margin-top: 3px; display: block; font-weight: bold; }
+        
+        .client-view { background: white; border-radius: 30px; box-shadow: 0 20px 50px rgba(29,53,87,0.1); width: 100%; max-width: 420px; overflow: hidden; display: none; align-self: center; border: 1px solid rgba(0,0,0,0.05); position: relative; }
+        .client-header { background: linear-gradient(135deg, var(--brand-orange), var(--brand-red)); color: white; padding: 30px 25px; text-align: center; position: relative; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
+        
+        .info-body { padding: 25px; }
+        .info-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; background: #fff; padding: 12px 15px; border-radius: 15px; border: 1px solid #f1f3f5; }
+        .label { color: #adb5bd; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        .value { font-weight: 700; color: var(--dark-blue); font-size: 0.9rem; word-break: break-all; }
+        
+        .copy-btn { background: #f8f9fa; border: 1px solid #e9ecef; color: var(--brand-orange); cursor: pointer; padding: 6px 10px; border-radius: 10px; transition: 0.3s; }
+        .copy-btn:hover { background: var(--brand-orange); color: white; }
+        
+        .timer-section { background: #f8f9fa; padding: 20px; border-radius: 20px; text-align: center; margin: 20px 0; border: 1px solid #e9ecef; }
+        
+        .btn-contact { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; border-radius: 15px; text-decoration: none; font-weight: bold; margin-bottom: 12px; color: white; font-size: 0.95rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; }
+        .btn-contact:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        /* الإدارة */
+        .admin-panel { width: 100%; max-width: 1100px; display: none; }
+        .admin-header { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .logo-uploader { background: #fff5f2; padding: 15px; border-radius: 18px; border: 2px dashed var(--brand-orange); margin-top: 15px; display: flex; align-items: center; gap: 15px; }
+        .btn-add { background: var(--brand-orange); color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; }
+        
+        .clients-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 20px; }
+        .client-item { background: white; padding: 20px; border-radius: 20px; border: 1px solid #f1f3f5; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 30px; border-radius: 25px; width: 90%; max-width: 480px; }
     </style>
 </head>
 <body>
 
-<div id="loading" class="loading-overlay"><div class="spinner"></div><p style="font-weight: bold; color: var(--brand-orange);">جاري تحديث البيانات...</p></div>
+<div id="loading" class="loading-overlay"><div class="spinner"></div><p style="font-weight:bold; color:var(--brand-orange)">جاري المزامنة...</p></div>
 
 <div id="clientView" class="client-view">
     <div id="v-status-bar" class="status-bar"></div>
     <div class="client-header">
         <img id="v-logo" class="brand-logo" style="display:none;">
-        <i id="v-icon" class="fas fa-bolt fa-3x" style="margin-bottom:10px"></i>
-        <h2 id="v-name" style="margin:0; font-size: 1.3rem; letter-spacing: -0.5px;"></h2>
+        <i id="v-icon" class="fas fa-user-circle fa-4x" style="margin-bottom:10px"></i>
+        <h2 id="v-name" style="margin:0; font-size: 1.2rem;"></h2>
     </div>
     <div class="info-body">
         <center><div id="v-status-text" class="status-msg"></div></center>
+        <div class="info-row"><div><span class="label">تاريخ النهاية</span><br><span class="value" id="v-end"></span></div></div>
+        <div class="info-row"><div><span class="label">اسم المستخدم</span><br><span id="v-plan" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-plan')"><i class="far fa-copy"></i></button></div>
+        <div class="info-row"><div><span class="label">كلمة السر</span><br><span id="v-pass" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-pass')"><i class="far fa-copy"></i></button></div>
         
-        <div class="info-row">
-            <div><span class="label">موعد الانتهاء</span><br><span class="value" id="v-end"></span></div>
-            <i class="far fa-calendar-alt" style="color: #dee2e6;"></i>
-        </div>
+        <div class="timer-section"><span class="label" style="color:var(--dark-blue)">متبقي على الانتهاء</span><div id="timer" class="timer-display"></div></div>
         
-        <div class="info-row">
-            <div><span class="label">اسم المستخدم</span><br><span id="v-plan" class="value"></span></div>
-            <button class="copy-btn" onclick="copyTag('v-plan')"><i class="far fa-copy"></i></button>
-        </div>
-        
-        <div class="info-row">
-            <div><span class="label">كلمة السر</span><br><span id="v-pass" class="value"></span></div>
-            <button class="copy-btn" onclick="copyTag('v-pass')"><i class="far fa-copy"></i></button>
-        </div>
-
-        <div class="timer-section">
-            <span class="label" style="color: var(--dark-blue); opacity: 0.6;">متبقي على نهاية التجربة</span>
-            <div id="timer" class="timer-display"></div>
-        </div>
-
-        <a href="https://abonaoaf.github.io/az/" class="btn-contact" style="background: var(--dark-blue);">
-            <i class="fas fa-rocket"></i> متجر تطبيقات فولتشر
-        </a>
-        <a href="https://wa.me/966594393012" class="btn-contact" style="background: #25d366;">
-            <i class="fab fa-whatsapp"></i> الدعم الفني المباشر
-        </a>
-        <a href="https://whatsapp.com/channel/0029VaFYcHcAO7RGw0O0QM1E" class="btn-contact" style="background: var(--brand-orange);">
-            <i class="fas fa-bullhorn"></i> قناة قبل الحدث
-        </a>
+        <a href="https://abonaoaf.github.io/az/" class="btn-contact" style="background: var(--dark-blue);"><i class="fas fa-th-large"></i> متجر تطبيقات فولتشر </a>
+        <a href="https://wa.me/966594393012" class="btn-contact" style="background: #25d366;"><i class="fab fa-whatsapp"></i> الدعم الفني المباشر</a>
+        <a href="https://whatsapp.com/channel/0029VaFYcHcAO7RGw0O0QM1E" class="btn-contact" style="background: var(--brand-orange);"><i class="fas fa-bullhorn"></i> تابعنا على قناة قبل الحدث</a>
     </div>
 </div>
 
 <div id="adminPanel" class="admin-panel">
     <div class="admin-header">
-        <div class="admin-top-bar">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
             <h2><i class="fas fa-user-shield"></i> لوحة الإدارة</h2>
-            <button class="btn-add" onclick="openModal()">+ مشترك جديد</button>
+            <button class="btn-add" onclick="openModal()">+ إضافة مشترك</button>
         </div>
         <div class="logo-uploader">
-            <div style="background: var(--brand-orange); color:white; padding:10px; border-radius:12px;"><i class="fas fa-camera"></i></div>
+            <i class="fas fa-image fa-2x" style="color:var(--brand-orange)"></i>
             <div style="flex:1">
-                <span style="font-size:0.85rem; font-weight:800; display:block;">تحديث شعار المتجر</span>
-                <input type="file" id="logoInput" accept="image/*" style="font-size:0.75rem; border:none; padding:0; margin:5px 0 0 0;">
+                <span style="font-size:0.8rem; font-weight:bold; display:block;">تغيير الشعار من الاستوديو:</span>
+                <input type="file" id="logoInput" accept="image/*" style="font-size:0.7rem; margin-top:5px;">
             </div>
         </div>
     </div>
@@ -241,16 +116,17 @@
 
 <div id="modal" class="modal">
     <div class="modal-content">
-        <h3 id="modalTitle" style="margin-top:0;">إضافة مشترك</h3>
-        <input type="hidden" id="editIndex">
-        <input type="text" id="in-name" placeholder="اسم المشترك">
-        <input type="text" id="in-plan" placeholder="اسم المستخدم">
-        <input type="text" id="in-pass" placeholder="كلمة السر">
-        <label class="label">تاريخ الانتهاء</label>
-        <input type="date" id="in-expiry">
+        <h3>بيانات المشترك</h3><input type="hidden" id="editIndex">
+        <div style="display:grid; gap:10px;">
+            <input type="text" id="in-name" placeholder="اسم العميل" style="padding:12px; border-radius:10px; border:1px solid #ddd;">
+            <input type="text" id="in-plan" placeholder="اسم المستخدم" style="padding:12px; border-radius:10px; border:1px solid #ddd;">
+            <input type="text" id="in-pass" placeholder="كلمة السر" style="padding:12px; border-radius:10px; border:1px solid #ddd;">
+            <label style="font-size:0.7rem; font-weight:bold;">تاريخ الانتهاء:</label>
+            <input type="date" id="in-expiry" style="padding:12px; border-radius:10px; border:1px solid #ddd;">
+        </div>
         <div style="display:flex; gap:10px; margin-top:20px;">
             <button class="btn-add" onclick="saveClient()" style="flex:2">حفظ ومزامنة</button>
-            <button onclick="closeModal()" style="flex:1; border:none; background:#f1f3f5; border-radius:15px; font-weight:bold;">إلغاء</button>
+            <button onclick="closeModal()" style="flex:1; border:none; background:#eee; border-radius:10px;">إلغاء</button>
         </div>
     </div>
 </div>
@@ -258,35 +134,40 @@
 <script>
     const ADMIN_KEY = "AboNawaf_Platform_2026";
     const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/.json";
-    let fullData = { clients: [], config: { logo: "" } };
+    let fullData = { clients: [], apps: [], config: { logo: "" } };
     const params = new URLSearchParams(window.location.search);
 
     async function loadData() {
         showLoading(true);
         try {
-            const r = await fetch(DB_URL);
-            const d = await r.json();
-            fullData.clients = d?.clients || [];
-            fullData.config = d?.config || { logo: "" };
+            const response = await fetch(DB_URL);
+            const data = await response.json();
+            fullData.clients = data?.clients || [];
+            fullData.apps = data?.apps || [];
+            fullData.config = data?.config || { logo: "" };
 
-            const u = params.get('user');
-            const a = params.get('admin');
+            const user = params.get('user');
+            const admin = params.get('admin');
 
-            if (u) showUser(decodeURIComponent(u));
-            else if (a === ADMIN_KEY) showAdmin();
-            else document.body.innerHTML = "<center><h1>الرابط غير صحيح</h1></center>";
-        } catch (e) { console.error(e); }
+            if (user) { 
+                showUser(decodeURIComponent(user));
+            } else if (admin === ADMIN_KEY) { 
+                showAdmin();
+            } else {
+                document.body.innerHTML = "<center><h1 style='margin-top:100px;'>⚠️ وصول غير مصرح</h1></center>";
+            }
+        } catch (error) { console.log(error); }
         showLoading(false);
     }
 
     function showUser(name) {
         const c = fullData.clients.find(x => x.name === name);
         if (!c) return document.body.innerHTML = "<center><h1>المشترك غير موجود</h1></center>";
-        
         document.getElementById('clientView').style.display = 'block';
         if (fullData.config.logo) {
-            document.getElementById('v-logo').src = fullData.config.logo;
-            document.getElementById('v-logo').style.display = 'block';
+            const img = document.getElementById('v-logo');
+            img.src = fullData.config.logo;
+            img.style.display = 'block';
             document.getElementById('v-icon').style.display = 'none';
         }
         document.getElementById('v-name').innerText = "مرحباً: " + c.name;
@@ -301,39 +182,32 @@
         document.getElementById('adminPanel').style.display = 'block';
         renderClients();
         document.getElementById('logoInput').onchange = e => {
-            const f = e.target.files[0];
-            const r = new FileReader();
-            r.onload = async ev => { fullData.config.logo = ev.target.result; await sync(); alert("تم تحديث الشعار!"); };
-            r.readAsDataURL(f);
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = async ev => { fullData.config.logo = ev.target.result; await sync(); alert("تم تحديث الشعار!"); };
+            reader.readAsDataURL(file);
         };
     }
 
     function renderClients() {
         document.getElementById('clientsList').innerHTML = fullData.clients.map((c, i) => `
-            <div style="background:white; padding:20px; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.03);">
-                <h3 style="margin:0; color:var(--brand-orange);">${c.name}</h3>
-                <p style="font-size:0.8rem; color:#6c757d; margin:5px 0;">ينتهي في: ${c.expiry}</p>
-                <div style="display:flex; gap:8px; margin-top:15px;">
-                    <button class="copy-btn" style="flex:1" onclick="copyUrl('${c.name}')"><i class="fas fa-link"></i> الرابط</button>
-                    <button class="copy-btn" style="flex:1; color:var(--brand-red);" onclick="deleteClient(${i})"><i class="fas fa-trash"></i></button>
+            <div class="client-item">
+                <h3 style="color:var(--brand-orange); margin:0;">${c.name}</h3>
+                <small>النهاية: ${c.expiry}</small>
+                <div style="display:flex; gap:5px; margin-top:10px;">
+                    <button class="copy-btn" style="flex:1" onclick="copyUrl('${c.name}')">الرابط</button>
+                    <button class="copy-btn" style="flex:1; color:red;" onclick="deleteClient(${i})">حذف</button>
                 </div>
             </div>
         `).join('');
     }
 
     async function saveClient() {
-        const c = { 
-            name: document.getElementById('in-name').value, 
-            plan: document.getElementById('in-plan').value, 
-            pass: document.getElementById('in-pass').value, 
-            expiry: document.getElementById('in-expiry').value 
-        };
-        fullData.clients.push(c);
-        await sync();
-        location.reload();
+        const c = { name: document.getElementById('in-name').value, plan: document.getElementById('in-plan').value, pass: document.getElementById('in-pass').value, expiry: document.getElementById('in-expiry').value };
+        fullData.clients.push(c); await sync(); location.reload();
     }
 
-    async function deleteClient(i) { if(confirm("حذف المشترك؟")) { fullData.clients.splice(i,1); await sync(); renderClients(); } }
+    async function deleteClient(i) { if(confirm("حذف؟")) { fullData.clients.splice(i,1); await sync(); renderClients(); } }
     async function sync() { showLoading(true); await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); showLoading(false); }
     function copyUrl(n) { const u = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(n)}`; navigator.clipboard.writeText(u); alert("تم النسخ!"); }
     function openModal() { document.getElementById('modal').style.display = 'flex'; }
@@ -355,22 +229,12 @@
         const diff = new Date(e).getTime() - new Date().getTime();
         const bar = document.getElementById('v-status-bar');
         const txt = document.getElementById('v-status-text');
-        if (diff <= 0) { 
-            bar.style.backgroundColor="var(--danger)"; 
-            txt.innerText="❌ اشتراك منتهي"; 
-            txt.style.color="var(--danger)"; txt.style.background="#fff5f5";
-        } else if (diff < 7*24*60*60*1000) { 
-            bar.style.backgroundColor="var(--warning)"; 
-            txt.innerText="⚠️ يرجى التجديد قريباً"; 
-            txt.style.color="#856404"; txt.style.background="#fffcf0";
-        } else { 
-            bar.style.backgroundColor="var(--success)"; 
-            txt.innerText="✅ اشتراك ساري ومفعل"; 
-            txt.style.color="var(--success)"; txt.style.background="#f0fffb";
-        }
+        if (diff <= 0) { bar.style.backgroundColor="var(--danger)"; txt.innerText="❌ منتهي"; txt.style.color="var(--danger)"; txt.style.background="#fff1f2"; }
+        else if (diff < 7*24*60*60*1000) { bar.style.backgroundColor="var(--warning)"; txt.innerText="⚠️ يرجى التجديد قريباً"; txt.style.color="#856404"; txt.style.background="#fffcf0"; }
+        else { bar.style.backgroundColor="var(--success)"; txt.innerText="✅ اشتراك ساري ومفعل"; txt.style.color="var(--success)"; txt.style.background="#f0fffb"; }
     }
-
     loadData();
 </script>
 </body>
 </html>
+[cite_start]
