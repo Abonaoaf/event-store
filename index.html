@@ -8,42 +8,62 @@
     <style>
         :root { --primary: #007bff; --success: #28a745; --bg: #f4f7f6; --whatsapp: #25d366; --channel: #008069; --danger: #dc3545; --text: #2d3748; --warning: #ffc107; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; color: var(--text); }
+        
+        /* التنسيقات الأساسية */
         .status-bar { height: 6px; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
         .status-msg { font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; padding: 5px 15px; border-radius: 20px; display: inline-block; }
         .progress-container { width: 100%; height: 10px; background: var(--danger); border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid #ddd; }
         .progress-fill { height: 100%; background: var(--success); width: 100%; transition: width 1s linear; float: right; }
+
+        /* شاشة التحميل */
         .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* حاوية العميل */
         .client-view { background: white; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 420px; overflow: hidden; display: none; align-self: center; border: 1px solid rgba(0,0,0,0.05); position: relative; margin: 20px auto; }
         .client-header { background: white; color: black; padding: 30px 25px; text-align: center; position: relative; border-bottom: 1px solid #eee; }
         .brand-container { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px; }
         .brand-logo, .date-box { width: 100px; height: 100px; background: white; padding: 10px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; }
         .date-box { border: 2px solid #f0f0f0; }
         .date-num { font-size: 1.6rem; font-weight: 900; color: #333; line-height: 1.1; }
-        #v-name-container { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.3rem; }
+        
+        #v-name-container { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
         .welcome-msg { margin-top: 15px; font-size: 0.95rem; color: #4a5568; line-height: 1.6; }
         .welcome-family { font-weight: 800; color: #ff0000; display: block; margin-bottom: 20px; font-size: 1.1rem; }
+
         .info-body { padding: 20px; }
         .info-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #edf2f7; }
         .label { color: #64748b; font-size: 0.7rem; font-weight: bold; }
         .value { font-weight: 600; color: #1e293b; font-size: 0.9rem; word-break: break-all; }
         .copy-btn { background: white; border: 1px solid #e2e8f0; color: var(--primary); cursor: pointer; padding: 6px 10px; border-radius: 8px; }
+        
         .timer-section { background: #f1f5f9; padding: 15px; border-radius: 16px; text-align: center; margin: 15px 0; border: 1px solid #e2e8f0; }
         .timer-display { display: flex; justify-content: center; gap: 5px; margin-top: 10px; direction: ltr; }
-        .time-unit { background: white; padding: 8px 4px; border-radius: 8px; min-width: 42px; text-align: center; border: 1px solid #e2e8f0; }
-        .btn-contact { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-bottom: 10px; color: white; font-size: 0.9rem; border: none; }
+        .time-unit { background: white; padding: 8px 4px; border-radius: 8px; min-width: 42px; border: 1px solid #e2e8f0; }
+        .time-num { display: block; font-size: 1rem; font-weight: bold; color: var(--primary); }
+        .time-lab { font-size: 0.6rem; color: #718096; }
+
+        /* الأزرار الثابتة */
+        .btn-contact { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-bottom: 10px; color: white; font-size: 0.9rem; }
+        
+        /* لوحة الإدارة */
         .admin-panel { width: 100%; max-width: 1100px; display: none; }
-        .admin-header { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; background: white; padding: 15px 25px; border-radius: 20px; }
+        .admin-header { background: white; padding: 25px; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .clients-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 20px; }
-        .client-item { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+        .client-item { background: white; padding: 20px; border-radius: 20px; border: 1px solid #f1f5f9; box-shadow: 0 6px 15px rgba(0,0,0,0.05); }
+
+        /* المودال */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 480px; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 0.8rem; margin-bottom: 4px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<div id="loading" class="loading-overlay"><div class="spinner"></div><p>جاري تحميل البيانات...</p></div>
+<div id="loading" class="loading-overlay"><div class="spinner"></div><p>جاري مزامنة البيانات السحابية...</p></div>
 
 <div id="clientView" class="client-view">
     <div id="v-status-bar" class="status-bar"></div>
@@ -54,9 +74,9 @@
                 <i id="v-icon" class="fas fa-user-shield fa-3x" style="color:#ddd"></i>
             </div>
             <div class="date-box">
-                <span style="font-size:0.6rem; color:red" id="v-today-name"></span>
-                <span class="date-num" id="v-today-num"></span>
-                <span style="font-size:0.7rem;" id="v-today-month"></span>
+                <span id="v-today-name" style="font-size: 0.65rem; color: var(--danger); font-weight: bold;"></span>
+                <span id="v-today-num" class="date-num"></span>
+                <span id="v-today-month" style="font-size: 0.75rem; color: #666;"></span>
             </div>
         </div>
         
@@ -71,7 +91,7 @@
 
     <div class="info-body">
         <center><div id="v-status-text" class="status-msg"></div></center>
-        <div class="info-row"><div><span class="label">تاريخ النهاية</span><br><span class="value" id="v-end"></span></div></div>
+        <div class="info-row"><div><span class="label">تاريخ الانتهاء</span><br><span class="value" id="v-end"></span></div></div>
         <div class="info-row"><div><span class="label">اسم المستخدم</span><br><span id="v-plan" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-plan')"><i class="far fa-copy"></i></button></div>
         <div class="info-row"><div><span class="label">كلمة السر</span><br><span id="v-pass" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-pass')"><i class="far fa-copy"></i></button></div>
         
@@ -89,30 +109,34 @@
 <div id="adminPanel" class="admin-panel">
     <div class="admin-header">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h2>لوحة التحكم</h2>
+            <h2><i class="fas fa-users-cog"></i> إدارة المشتركين</h2>
             <button class="btn-contact" style="background:var(--success); width:auto;" onclick="openModal()">+ مشترك جديد</button>
         </div>
-        <input type="file" id="logoInput" accept="image/*">
+        <div style="margin-top:15px; border:1px dashed var(--primary); padding:10px; border-radius:10px;">
+            <label>تغيير شعار المنصة:</label> <input type="file" id="logoInput" accept="image/*">
+        </div>
     </div>
     <div id="clientsList" class="clients-list"></div>
 </div>
 
 <div id="modal" class="modal">
     <div class="modal-content">
-        <h3>بيانات المشترك</h3>
+        <h3 id="modalTitle">بيانات المشترك</h3>
         <input type="hidden" id="editIndex">
-        <input type="text" id="in-name" placeholder="الاسم" style="width:100%; margin-bottom:10px; padding:8px;">
-        <input type="text" id="in-plan" placeholder="اسم المستخدم" style="width:100%; margin-bottom:10px; padding:8px;">
-        <input type="text" id="in-pass" placeholder="كلمة السر" style="width:100%; margin-bottom:10px; padding:8px;">
-        <input type="date" id="in-start" style="width:100%; margin-bottom:10px; padding:8px;">
-        <input type="date" id="in-expiry" style="width:100%; margin-bottom:10px; padding:8px;">
-        <button onclick="saveClient()" style="background:var(--success); color:white; border:none; padding:10px; width:100%;">حفظ</button>
-        <button onclick="closeModal()" style="width:100%; margin-top:5px; border:none; padding:5px;">إلغاء</button>
+        <div class="form-group"><label>اسم العميل</label><input type="text" id="in-name"></div>
+        <div class="form-group"><label>اسم المستخدم</label><input type="text" id="in-plan"></div>
+        <div class="form-group"><label>كلمة السر</label><input type="text" id="in-pass"></div>
+        <div class="form-group"><label>تاريخ البداية</label><input type="date" id="in-start"></div>
+        <div class="form-group"><label>تاريخ النهاية</label><input type="date" id="in-expiry"></div>
+        <button class="btn-contact" onclick="saveClient()" style="background:var(--primary); border:none;">حفظ البيانات</button>
+        <button onclick="closeModal()" style="width:100%; background:none; border:none; cursor:pointer;">إلغاء</button>
     </div>
 </div>
 
 <script>
+    const ADMIN_KEY = "AboNawaf_Platform_2026";
     const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/.json";
+    
     let fullData = { clients: [], config: { logo: "" } };
     const params = new URLSearchParams(window.location.search);
 
@@ -121,24 +145,28 @@
         try {
             const res = await fetch(DB_URL);
             const data = await res.json();
-            if (data) { fullData = data; if(!fullData.clients) fullData.clients = []; }
+            if (data) {
+                fullData.clients = data.clients || [];
+                fullData.config = data.config || { logo: "" };
+            }
             
             const user = params.get('user');
             const admin = params.get('admin');
 
             if (user) { 
-                showUser(decodeURIComponent(user));
-            } else if (admin === "123") { 
-                renderClients();
+                initUser(decodeURIComponent(user));
+            } else if (admin === ADMIN_KEY || admin === "123") { 
+                renderAdmin();
                 document.getElementById('adminPanel').style.display = 'block';
+                setupLogo();
             }
-        } catch (e) { console.log(e); }
+        } catch (e) { console.error("Database Error"); }
         showLoading(false);
     }
 
-    function showUser(name) {
-        const c = fullData.clients.find(x => x.name === name);
-        if (!c) return document.body.innerHTML = "المشترك غير موجود";
+    function initUser(userName) {
+        const c = fullData.clients.find(x => x.name === userName);
+        if (!c) { document.body.innerHTML = "<h1>عذراً، المشترك غير موجود</h1>"; return; }
         
         document.getElementById('clientView').style.display = 'block';
         document.getElementById('v-name').innerText = c.name;
@@ -146,10 +174,11 @@
         document.getElementById('v-pass').innerText = c.pass;
         document.getElementById('v-end').innerText = c.expiry;
         
-        const today = new Date();
-        document.getElementById('v-today-name').innerText = today.toLocaleDateString('ar-SA', {weekday:'long'});
-        document.getElementById('v-today-num').innerText = today.getDate();
-        document.getElementById('v-today-month').innerText = today.toLocaleDateString('ar-SA', {month:'long'});
+        // التواريخ
+        const now = new Date();
+        document.getElementById('v-today-name').innerText = now.toLocaleDateString('ar-SA', {weekday:'long'});
+        document.getElementById('v-today-num').innerText = now.getDate();
+        document.getElementById('v-today-month').innerText = now.toLocaleDateString('ar-SA', {month:'long'});
 
         if (fullData.config.logo) {
             document.getElementById('v-logo').src = fullData.config.logo;
@@ -157,36 +186,45 @@
             document.getElementById('v-icon').style.display = 'none';
         }
 
-        setInterval(() => updateTimer(c.expiry), 1000);
+        setInterval(() => {
+            const diff = new Date(c.expiry).getTime() - new Date().getTime();
+            updateDisplay(diff, c.start, c.expiry);
+        }, 1000);
     }
 
-    function updateTimer(expiry) {
-        const diff = new Date(expiry).getTime() - new Date().getTime();
+    function updateDisplay(diff, start, expiry) {
+        const timer = document.getElementById('timer');
         const txt = document.getElementById('v-status-text');
         const bar = document.getElementById('v-status-bar');
-        
+        const progress = document.getElementById('v-progress');
+
         if (diff <= 0) {
-            document.getElementById('timer').innerHTML = "منتهي";
+            timer.innerHTML = "<b style='color:red'>منتهي</b>";
             txt.innerText = "❌ اشتراك منتهي";
             bar.style.background = "var(--danger)";
+            progress.style.width = "0%";
         } else {
-            const d = Math.floor(diff/(1000*60*60*24));
-            const h = Math.floor((diff/(1000*60*60))%24);
-            const m = Math.floor((diff/(1000*60))%60);
-            const s = Math.floor((diff/1000)%60);
-            document.getElementById('timer').innerHTML = `<div class="time-unit">${d}<span>يوم</span></div><div class="time-unit">${h}<span>ساعة</span></div><div class="time-unit">${m}<span>د</span></div><div class="time-unit">${s}<span>ث</span></div>`;
-            txt.innerText = "✅ اشتراك فعال";
+            const d = Math.floor(diff/(1000*60*60*24)), h = Math.floor((diff/(1000*60*60))%24), m = Math.floor((diff/(1000*60))%60), s = Math.floor((diff/1000)%60);
+            timer.innerHTML = `<div class="time-unit"><span class="time-num">${d}</span><span class="time-lab">يوم</span></div><div class="time-unit"><span class="time-num">${h}</span><span class="time-lab">ساعة</span></div><div class="time-unit"><span class="time-num">${m}</span><span class="time-lab">د</span></div><div class="time-unit"><span class="time-num">${s}</span><span class="time-lab">ث</span></div>`;
+            txt.innerText = "✅ اشتراك فعال ومفعل";
             bar.style.background = "var(--success)";
+            
+            const total = new Date(expiry).getTime() - new Date(start).getTime();
+            const perc = (diff / total) * 100;
+            progress.style.width = (perc > 100 ? 100 : perc) + "%";
         }
     }
 
-    function renderClients() {
+    function renderAdmin() {
         const list = document.getElementById('clientsList');
         list.innerHTML = fullData.clients.map((c, i) => `
             <div class="client-item">
-                <h4>${c.name}</h4>
-                <button onclick="copyUrl('${c.name}')">نسخ الرابط</button>
-                <button onclick="deleteClient(${i})">حذف</button>
+                <h3>${c.name}</h3>
+                <p>تنتهي في: ${c.expiry}</p>
+                <div style="display:flex; gap:5px;">
+                    <button class="copy-btn" onclick="copyUserUrl('${c.name}')">نسخ الرابط</button>
+                    <button class="copy-btn" style="color:red" onclick="deleteUser(${i})">حذف</button>
+                </div>
             </div>
         `).join('');
     }
@@ -199,28 +237,42 @@
             start: document.getElementById('in-start').value,
             expiry: document.getElementById('in-expiry').value
         };
-        fullData.clients.push(c);
+        const idx = document.getElementById('editIndex').value;
+        if (idx === "-1") fullData.clients.push(c); else fullData.clients[idx] = c;
+        
         await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
         location.reload();
     }
 
-    async function deleteClient(i) {
-        if(confirm("حذف؟")) {
-            fullData.clients.splice(i,1);
+    async function deleteUser(i) {
+        if(confirm("حذف المشترك؟")) {
+            fullData.clients.splice(i, 1);
             await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
-            renderClients();
+            renderAdmin();
         }
     }
 
-    function copyUrl(n) {
+    function copyUserUrl(n) {
         const url = window.location.origin + window.location.pathname + "?user=" + encodeURIComponent(n);
-        navigator.clipboard.writeText(url); alert("تم النسخ");
+        navigator.clipboard.writeText(url); alert("تم النسخ!");
     }
 
-    function openModal() { document.getElementById('modal').style.display = 'flex'; }
+    function setupLogo() {
+        document.getElementById('logoInput').onchange = function(e) {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                fullData.config.logo = ev.target.result;
+                await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
+                alert("تم تحديث الشعار");
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+    }
+
+    function openModal() { document.getElementById('editIndex').value = "-1"; document.getElementById('modal').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
     function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
-    function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم النسخ"); }
+    function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم نسخ البيانات!"); }
 
     window.onload = loadData;
 </script>
