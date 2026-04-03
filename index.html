@@ -12,10 +12,15 @@
         /* التعديلات المضافة للوجو والحالة */
         .status-bar { height: 6px; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
         .status-msg { font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; padding: 5px 15px; border-radius: 20px; display: inline-block; }
+        .brand-logo { max-width: 140px; height: auto; display: block; margin: 0 auto 10px auto; background: white; padding: 10px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        /* شريط التقدم "الأكّال": الأحمر في الخلفية والأخضر ينقص */
-        .progress-container { width: 100%; height: 10px; background: var(--danger); border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid #ddd; }
+        /* شريط التقدم */
+        .progress-container { width: 100%; height: 8px; background: var(--danger); border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid #ddd; }
         .progress-fill { height: 100%; background: var(--success); width: 100%; transition: width 1s linear; float: right; }
+        
+        /* شريط التقدم الصغير في لوحة الإدارة */
+        .admin-progress-container { width: 100%; height: 6px; background: #eee; border-radius: 10px; margin: 10px 0; overflow: hidden; }
+        .admin-progress-fill { height: 100%; float: right; transition: width 0.5s; }
 
         .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
@@ -26,9 +31,7 @@
         .time-lab { font-size: 0.6rem; color: #718096; margin-top: 3px; display: block; font-weight: bold; }
         .client-view { background: white; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 420px; overflow: hidden; display: none; align-self: center; border: 1px solid rgba(0,0,0,0.05); position: relative; }
         
-        /* منطقة الترحيب البيضاء والنص الأسود ومربع اللوجو */
         .client-header { background: white; color: black; padding: 30px 25px; text-align: center; position: relative; border-bottom: 1px solid #eee; }
-        .brand-logo { max-width: 140px; height: auto; display: block; margin: 0 auto 10px auto; background: white; padding: 10px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         #v-name { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
 
         .info-body { padding: 20px; }
@@ -179,26 +182,46 @@
         document.getElementById('v-pass').innerText = c.pass;
         document.getElementById('v-start').innerText = c.start;
         document.getElementById('v-end').innerText = c.expiry;
-        updateStatusAndProgress(c.start, c.expiry);
+        updateStatusAndProgress(c.start, c.expiry, 'v-progress', 'v-status-bar', 'v-status-text');
         if (!window.timerInterval) {
             window.timerInterval = setInterval(() => { 
                 document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry)); 
-                updateStatusAndProgress(c.start, c.expiry);
+                updateStatusAndProgress(c.start, c.expiry, 'v-progress', 'v-status-bar', 'v-status-text');
             }, 1000);
         }
     }
 
-    function updateStatusAndProgress(start, expiry) {
+    function updateStatusAndProgress(start, expiry, barId, statusBarId, statusTextId) {
         const now = new Date().getTime(), startDate = new Date(start).getTime(), endDate = new Date(expiry).getTime();
         const totalDuration = endDate - startDate, remainingTime = endDate - now;
         let percent = (remainingTime / totalDuration) * 100;
         if (percent > 100) percent = 100;
         if (percent < 0) percent = 0;
-        document.getElementById('v-progress').style.width = percent + "%";
-        const bar = document.getElementById('v-status-bar'), txt = document.getElementById('v-status-text');
-        if (remainingTime <= 0) { bar.style.backgroundColor="var(--danger)"; txt.innerText="❌ اشتراك منتهي"; txt.style.color="var(--danger)";
-        } else { bar.style.backgroundColor="var(--success)"; txt.innerText="✅ اشتراك ساري ومفعل"; txt.style.color="var(--success)";
+        
+        const bar = document.getElementById(barId);
+        if(bar) {
+            bar.style.width = percent + "%";
+            // تلوين الشريط بناءً على التقدم في لوحة الإدارة
+            if(bar.classList.contains('admin-progress-fill')) {
+                if(percent > 50) bar.style.backgroundColor = "var(--success)";
+                else if(percent > 20) bar.style.backgroundColor = "var(--warning)";
+                else bar.style.backgroundColor = "var(--danger)";
+            }
         }
+        
+        const statusBar = document.getElementById(statusBarId), statusText = document.getElementById(statusTextId);
+        if (statusBar && statusText) {
+            if (remainingTime <= 0) { 
+                statusBar.style.backgroundColor="var(--danger)"; 
+                statusText.innerText="❌ اشتراك منتهي"; 
+                statusText.style.color="var(--danger)";
+            } else { 
+                statusBar.style.backgroundColor="var(--success)"; 
+                statusText.innerText="✅ اشتراك ساري ومفعل"; 
+                statusText.style.color="var(--success)";
+            }
+        }
+        return percent;
     }
 
     async function syncToCloud() {
@@ -221,9 +244,17 @@
 
     function renderClients() {
         const list = document.getElementById('clientsList');
-        list.innerHTML = (fullData.clients || []).map((c, i) => `
+        list.innerHTML = (fullData.clients || []).map((c, i) => {
+            const now = new Date().getTime(), startDate = new Date(c.start).getTime(), endDate = new Date(c.expiry).getTime();
+            const totalDuration = endDate - startDate, remainingTime = endDate - now;
+            let percent = (remainingTime / totalDuration) * 100;
+            if (percent > 100) percent = 100; if (percent < 0) percent = 0;
+            let color = percent > 50 ? "var(--success)" : (percent > 20 ? "var(--warning)" : "var(--danger)");
+            
+            return `
             <div class="client-item">
                 <h3 style="color:var(--primary); margin:0;">${c.name}</h3>
+                <div class="admin-progress-container"><div class="admin-progress-fill" style="width:${percent}%; background-color:${color};"></div></div>
                 <div style="background:#f8fafc; padding:10px; border-radius:10px; font-size:0.8rem; margin:10px 0;">
                     <b>النهاية:</b> ${c.expiry} | <b>الجوال:</b> ${c.phone}
                 </div>
@@ -232,8 +263,8 @@
                     <button class="btn-sm btn-edit" onclick="editClient(${i})"><i class="fas fa-edit"></i></button>
                     <button class="btn-sm btn-del" onclick="deleteClient(${i})"><i class="fas fa-trash"></i></button>
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
     }
 
     async function saveClient() {
@@ -273,6 +304,4 @@
 
     loadData();
     setInterval(loadData, 300000);
-</script>
-</body>
-</html>
+</
