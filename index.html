@@ -31,6 +31,11 @@
         .date-month { font-size: 0.75rem; color: #666; font-weight: 600; }
         #v-name { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
 
+        /* التنسيق الجديد للترحيب */
+        .welcome-msg { margin-top: 15px; font-size: 0.95rem; color: #4a5568; line-height: 1.6; }
+        .welcome-family { font-weight: 800; color: #1a202c; display: block; margin-bottom: 5px; font-size: 1.1rem; }
+        .dashboard-title { margin-top: 15px; display: block; font-weight: bold; color: var(--primary); font-size: 0.9rem; text-decoration: underline; }
+
         .info-body { padding: 20px; }
         .info-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #edf2f7; }
         .label { color: #64748b; font-size: 0.7rem; font-weight: bold; }
@@ -85,6 +90,13 @@
             </div>
         </div>
         <h2 id="v-name"></h2>
+        
+        <div class="welcome-msg">
+            <span class="welcome-family">في أسرة فولتشر</span>
+            نحن سعداء بانضمامك إلينا ونتطلع لخدمتك بأفضل ما لدينا
+            <span class="dashboard-title">لوحة معلوماتك الشخصية</span>
+        </div>
+
         <div class="progress-container"><div id="v-progress" class="progress-fill"></div></div>
     </div>
     <div class="info-body">
@@ -142,7 +154,6 @@
     const ADMIN_KEY = "AboNawaf_Platform_2026";
     const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/.json";
     
-    // تم الحفاظ على هيكل البيانات لضمان عدم مسح التطبيقات (apps)
     let fullData = { clients: [], apps: [], config: { logo: "" } };
     const params = new URLSearchParams(window.location.search);
 
@@ -153,7 +164,6 @@
             const response = await fetch(DB_URL);
             const data = await response.json();
             if (data) {
-                // دمج البيانات السحابية مع الحفاظ على الأقسام الأخرى
                 fullData.clients = data.clients || [];
                 fullData.apps = data.apps || [];
                 fullData.config = data.config || { logo: "" };
@@ -206,7 +216,7 @@
             document.getElementById('v-icon').style.display = 'none';
         }
         
-        document.getElementById('v-name').innerText = "مرحباً: " + c.name;
+        document.getElementById('v-name').innerText = "مرحباً بك معنا " + c.name;
         document.getElementById('v-phone').innerText = c.phone || 'غير مسجل';
         document.getElementById('v-plan').innerText = c.plan;
         document.getElementById('v-pass').innerText = c.pass;
@@ -236,11 +246,11 @@
         
         if (remainingTime <= 0) { 
             bar.style.backgroundColor="var(--danger)"; 
-            txt.innerText="❌ اشتراكك منتهي"; 
+            txt.innerText="❌ اشتراك منتهي"; 
             txt.style.color="var(--danger)";
         } else { 
             bar.style.backgroundColor="var(--success)"; 
-            txt.innerText="✅ اشتراكك ساري ومفعل"; 
+            txt.innerText="✅ اشتراك ساري ومفعل"; 
             txt.style.color="var(--success)";
         }
     }
@@ -248,7 +258,6 @@
     async function syncToCloud() {
         showLoading(true);
         try { 
-            // إرسال fullData كاملة لضمان بقاء الأبلكيشنز كما هي
             await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); 
         } catch (error) { alert("فشلت المزامنة!"); }
         showLoading(false);
@@ -300,35 +309,4 @@
             start: document.getElementById('in-start').value,
             expiry: document.getElementById('in-expiry').value
         };
-        if(!data.name || !data.expiry) return alert("أكمل البيانات!");
-        
-        if (idx === -1) fullData.clients.push(data); 
-        else fullData.clients[idx] = data;
-        
-        await syncToCloud();
-        renderClients(); closeModal();
-    }
-
-    function copyClientUrl(userName) {
-        const url = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(userName)}`;
-        navigator.clipboard.writeText(url); alert("تم نسخ رابط العميل بنجاح");
-    }
-
-    function editClient(i) {
-        openModal();
-        document.getElementById('editIndex').value = i;
-        ['name','phone','plan','pass','link','start','expiry'].forEach(id => {
-            document.getElementById('in-'+id).value = fullData.clients[i][id] || '';
-        });
-    }
-
-    async function deleteClient(i) { if(confirm("هل أنت متأكد من الحذف؟")) { fullData.clients.splice(i,1); await syncToCloud(); renderClients(); } }
-    function openModal() { document.getElementById('editIndex').value = "-1"; document.getElementById('modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
-    function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم النسخ!"); }
-
-    loadData();
-</script>
-</body>
-</html>
+        if(!data.name || !data
