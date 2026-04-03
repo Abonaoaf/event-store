@@ -31,9 +31,9 @@
         .date-month { font-size: 0.75rem; color: #666; font-weight: 600; }
         #v-name { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
 
+        /* التنسيق الجديد بطلبك */
         .welcome-msg { margin-top: 15px; font-size: 0.95rem; color: #4a5568; line-height: 1.6; }
-        /* هنا تم تعديل التباعد بطلبك (margin-bottom: 15px) */
-        .welcome-family { font-weight: 800; color: #ff0000; display: block; margin-bottom: 15px; font-size: 1.1rem; }
+        .welcome-family { font-weight: 800; color: #ff0000; display: block; margin-bottom: 5px; font-size: 1.1rem; }
         .dashboard-title { margin-top: 15px; display: block; font-weight: bold; color: var(--primary); font-size: 0.9rem; text-decoration: underline; }
 
         .info-body { padding: 20px; }
@@ -91,10 +91,12 @@
         </div>
         <h2 id="v-name"></h2>
         
-        <div class="welcome-msg🤝">
+        <h2 id="v-name"></h2>
+        <div class="welcome-msg">
             <span class="welcome-family">في أسرة فولتشر</span>
             نحن سعداء بانضمامك إلينا ونتطلع لخدمتك بأفضل ما لدينا
             <span class="dashboard-title">لوحة معلوماتك الشخصية</span>
+        </div>
         </div>
 
         <div class="progress-container"><div id="v-progress" class="progress-fill"></div></div>
@@ -309,4 +311,4 @@
             start: document.getElementById('in-start').value,
             expiry: document.getElementById('in-expiry').value
         };
-   
+        if(!data.name || !data.e
