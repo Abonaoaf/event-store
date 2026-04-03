@@ -12,12 +12,22 @@
         .status-bar { height: 6px; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
         .status-msg { font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; padding: 5px 15px; border-radius: 20px; display: inline-block; }
         
+        /* شريط التقدم "الأكّال": الأحمر في الخلفية والأخضر ينقص فوقه */
         .progress-container { width: 100%; height: 10px; background: var(--danger); border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid #ddd; }
         .progress-fill { height: 100%; background: var(--success); width: 100%; transition: width 1s linear; float: right; }
 
+        .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .timer-display { display: flex; justify-content: center; gap: 5px; margin-top: 10px; flex-wrap: wrap; direction: ltr; }
+        .time-unit { background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid #e2e8f0; min-width: 42px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; }
+        .time-num { display: block; font-size: 1rem; font-weight: bold; color: var(--primary); line-height: 1; }
+        .time-lab { font-size: 0.6rem; color: #718096; margin-top: 3px; display: block; font-weight: bold; }
+        .client-view { background: white; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 420px; overflow: hidden; display: none; align-self: center; border: 1px solid rgba(0,0,0,0.05); position: relative; }
+        
+        /* منطقة الترحيب البيضاء والنص الأسود ومربع اللوجو والتاريخ */
         .client-header { background: white; color: black; padding: 30px 25px; text-align: center; position: relative; border-bottom: 1px solid #eee; }
         
-        /* مربع التاريخ واللوجو */
         .brand-container { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px; }
         .brand-logo, .date-box { 
             width: 100px; height: 100px; background: white; padding: 10px; border-radius: 18px; 
@@ -31,16 +41,6 @@
 
         #v-name { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
 
-        .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .timer-display { display: flex; justify-content: center; gap: 5px; margin-top: 10px; flex-wrap: wrap; direction: ltr; }
-        .time-unit { background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid #e2e8f0; min-width: 42px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; }
-        .time-num { display: block; font-size: 1rem; font-weight: bold; color: var(--primary); line-height: 1; }
-        .time-lab { font-size: 0.6rem; color: #718096; margin-top: 3px; display: block; font-weight: bold; }
-        .client-view { background: white; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 420px; overflow: hidden; display: none; align-self: center; border: 1px solid rgba(0,0,0,0.05); position: relative; }
-        
         .info-body { padding: 20px; }
         .info-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #edf2f7; }
         .label { color: #64748b; font-size: 0.7rem; font-weight: bold; }
@@ -51,9 +51,11 @@
         
         .admin-panel { width: 100%; max-width: 1100px; display: none; }
         .admin-header { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .admin-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .btn-add { background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
         .logo-uploader { background: #f0f7ff; padding: 10px; border-radius: 12px; border: 1px dashed var(--primary); display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; }
         
+        /* شريط تقدم مصغر للوحة الإدارة */
         .admin-progress-container { width: 100%; height: 6px; background: var(--danger); border-radius: 10px; margin: 8px 0; overflow: hidden; }
         .admin-progress-fill { height: 100%; background: var(--success); float: right; transition: width 0.5s; }
 
@@ -82,7 +84,7 @@
         <div class="brand-container">
             <div class="brand-logo">
                 <img id="v-logo" style="width:100%; height:100%; object-fit:contain; display:none;">
-                <i id="v-icon" class="fas fa-user-shield fa-4x" style="color:#ddd"></i>
+                <i id="v-icon" class="fas fa-user-shield fa-3x" style="color:#ddd"></i>
             </div>
             <div class="date-box">
                 <span class="date-day-name" id="v-today-name"></span>
@@ -101,7 +103,7 @@
         <div class="info-row"><div><span class="label">اسم المستخدم</span><br><span id="v-plan" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-plan')"><i class="far fa-copy"></i></button></div>
         <div class="info-row"><div><span class="label">كلمة السر</span><br><span id="v-pass" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-pass')"><i class="far fa-copy"></i></button></div>
         <div class="timer-section"><span class="label">الوقت المتبقي للانتهاء</span><div id="timer" class="timer-display"></div></div>
-        <a id="v-link" href="#" class="btn-contact" style="background: #4338ca; border: 2px solid #fff;">
+        <a href="https://abonaoaf.github.io/az/" class="btn-contact" style="background: #4338ca; border: 2px solid #fff;">
             <i class="fas fa-th-large"></i> متجر تطبيقات فولتشر 
         </a>
         <a href="https://wa.me/966594393012" class="btn-contact" style="background:var(--whatsapp);" target="_blank"><i class="fab fa-whatsapp"></i> الدعم الفني المباشر</a>
@@ -111,7 +113,7 @@
 
 <div id="adminPanel" class="admin-panel">
     <div class="admin-header">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="admin-top">
             <h2><i class="fas fa-cloud-upload-alt"></i> الإدارة السحابية</h2>
             <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> إضافة مشترك</button>
         </div>
@@ -206,10 +208,6 @@
         document.getElementById('v-pass').innerText = c.pass;
         document.getElementById('v-start').innerText = c.start;
         document.getElementById('v-end').innerText = c.expiry;
-        
-        const linkBtn = document.getElementById('v-link');
-        if (c.link) { linkBtn.href = c.link; linkBtn.target = "_blank"; }
-
         updateStatusAndProgress(c.start, c.expiry);
         if (!window.timerInterval) {
             window.timerInterval = setInterval(() => { 
@@ -223,7 +221,8 @@
         const now = new Date().getTime(), startDate = new Date(start).getTime(), endDate = new Date(expiry).getTime();
         const totalDuration = endDate - startDate, remainingTime = endDate - now;
         let percent = (remainingTime / totalDuration) * 100;
-        if (percent > 100) percent = 100; if (percent < 0) percent = 0;
+        if (percent > 100) percent = 100;
+        if (percent < 0) percent = 0;
         document.getElementById('v-progress').style.width = percent + "%";
         const bar = document.getElementById('v-status-bar'), txt = document.getElementById('v-status-text');
         if (remainingTime <= 0) { bar.style.backgroundColor="var(--danger)"; txt.innerText="❌ اشتراك منتهي"; txt.style.color="var(--danger)";
@@ -274,15 +273,41 @@
 
     async function saveClient() {
         const idx = parseInt(document.getElementById('editIndex').value);
-        const data = { name: document.getElementById('in-name').value.trim(), phone: document.getElementById('in-phone').value, plan: document.getElementById('in-plan').value, pass: document.getElementById('in-pass').value, link: document.getElementById('in-link').value, start: document.getElementById('in-start').value, expiry: document.getElementById('in-expiry').value };
+        const data = {
+            name: document.getElementById('in-name').value.trim(),
+            phone: document.getElementById('in-phone').value,
+            plan: document.getElementById('in-plan').value,
+            pass: document.getElementById('in-pass').value,
+            link: document.getElementById('in-link').value,
+            start: document.getElementById('in-start').value,
+            expiry: document.getElementById('in-expiry').value
+        };
         if(!data.name || !data.expiry) return alert("أكمل البيانات!");
         if (idx === -1) fullData.clients.push(data); else fullData.clients[idx] = data;
         await syncToCloud(); renderClients(); closeModal();
     }
 
-    function copyClientUrl(userName) { const url = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(userName)}`; navigator.clipboard.writeText(url); alert("تم نسخ رابط العميل بنجاح"); }
-    function editClient(i) { openModal(); document.getElementById('editIndex').value = i; ['name','phone','plan','pass','link','start','expiry'].forEach(id => { document.getElementById('in-'+id).value = fullData.clients[i][id] || ''; }); }
+    function copyClientUrl(userName) {
+        const url = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(userName)}`;
+        navigator.clipboard.writeText(url); alert("تم نسخ رابط العميل بنجاح");
+    }
+
+    function editClient(i) {
+        openModal();
+        document.getElementById('editIndex').value = i;
+        ['name','phone','plan','pass','link','start','expiry'].forEach(id => {
+            document.getElementById('in-'+id).value = fullData.clients[i][id] || '';
+        });
+    }
+
     async function deleteClient(i) { if(confirm("هل أنت متأكد من الحذف؟")) { fullData.clients.splice(i,1); await syncToCloud(); renderClients(); } }
     function openModal() { document.getElementById('editIndex').value = "-1"; document.getElementById('modal').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    function showLoading(s) { document.getElementById('loadi
+    function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
+    function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم النسخ!"); }
+
+    loadData();
+    setInterval(loadData, 300000);
+</script>
+</body>
+</html>
