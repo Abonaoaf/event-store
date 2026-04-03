@@ -301,6 +301,27 @@
 
     loadData();
     setInterval(loadData, 300000);
+    /* تحسين العرض عند اختيار وضع سطح المكتب أو الشاشات الكبيرة */
+@media (min-width: 768px) {
+    .client-view {
+        max-width: 650px; /* تمديد العرض ليصبح أوضح وأكبر */
+        margin: 40px auto; /* إضافة مسافة عمودية وتوسيط أفقي */
+    }
+    
+    .info-body {
+        padding: 30px; /* زيادة المساحة الداخلية لراحة العين */
+    }
+
+    .brand-logo, .date-box {
+        width: 120px; /* تكبير الشعار والتاريخ قليلاً */
+        height: 120px;
+    }
+
+    #v-name {
+        font-size: 1.8rem; /* تكبير خط الاسم */
+    }
+            }
+    
 </script>
 </body>
 </html>
