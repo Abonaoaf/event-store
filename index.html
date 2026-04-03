@@ -68,7 +68,7 @@
 </head>
 <body>
 
-<div id="loading" class="loading-overlay"><div class="spinner"></div><p>جاري تحميل البيانات...</p></div>
+<div id="loading" class="loading-overlay"><div class="spinner"></div><p>جاري مزامنة البيانات السحابية...</p></div>
 
 <div id="clientView" class="client-view">
     <div id="v-status-bar" class="status-bar"></div>
@@ -108,11 +108,11 @@
 <div id="adminPanel" class="admin-panel">
     <div class="admin-header">
         <div class="admin-top">
-            <h2><i class="fas fa-cloud-upload-alt"></i> الإدارة السحابية</h2>
-            <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> إضافة مشترك</button>
+            <h2><i class="fas fa-cloud-upload-alt"></i> إدارة المشتركين</h2>
+            <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> إضافة مشترك جديد</button>
         </div>
         <div class="logo-uploader">
-            <i class="fas fa-image"></i><span>تحديث الشعار من الاستوديو:</span>
+            <i class="fas fa-image"></i><span>شعار المنصة:</span>
             <input type="file" id="logoInput" accept="image/*">
         </div>
     </div>
@@ -127,7 +127,7 @@
             <div class="form-group"><label>رقم الجوال</label><input type="text" id="in-phone"></div>
             <div class="form-group"><label>اسم المستخدم</label><input type="text" id="in-plan"></div>
             <div class="form-group"><label>كلمة السر</label><input type="text" id="in-pass"></div>
-            <div class="form-group full"><label>رابط الدخول</label><input type="text" id="in-link" value="https://vultr.com/login"></div>
+            <div class="form-group full"><label>رابط الدخول</label><input type="text" id="in-link" value="http://rik.ksvu2070.top:80"></div>
             <div class="form-group"><label>تاريخ البداية</label><input type="date" id="in-start"></div>
             <div class="form-group"><label>تاريخ النهاية</label><input type="date" id="in-expiry"></div>
         </div>
@@ -141,7 +141,9 @@
 <script>
     const ADMIN_KEY = "AboNawaf_Platform_2026";
     const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/.json";
-    let fullData = { clients: [], config: { logo: "" } };
+    
+    // الهيكل الأساسي لضمان عدم حذف أي قسم آخر مثل الأبلكيشنز
+    let fullData = { clients: [], apps: [], config: { logo: "" } };
     const params = new URLSearchParams(window.location.search);
 
     async function loadData() {
@@ -150,10 +152,16 @@
         try {
             const response = await fetch(DB_URL);
             const data = await response.json();
-            fullData.clients = data?.clients || [];
-            fullData.config = data?.config || { logo: "" };
+            if (data) {
+                // الحفاظ على الأبلكيشنز والأقسام الأخرى إذا كانت موجودة في السحابة
+                fullData.clients = data.clients || [];
+                fullData.apps = data.apps || [];
+                fullData.config = data.config || { logo: "" };
+            }
+            
             const user = params.get('user');
             const admin = params.get('admin');
+
             if (user) { 
                 updateClientViewOnly(decodeURIComponent(user));
             } else if (admin === ADMIN_KEY) { 
@@ -161,7 +169,7 @@
                 document.getElementById('adminPanel').style.display = 'block';
                 setupLogoUploader();
             } else {
-                document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>⚠️ وصول غير مصرح به</h1><p>يرجى استخدام الرابط الصحيح للدخول.</p></div>";
+                document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>⚠️ وصول غير مصرح به</h1><p>يرجى استخدام الرابط الصحيح للدخول كمسؤول أو كمشترك.</p></div>";
             }
         } catch (error) { console.error("Error loading data"); }
         if (isInitialLoad) showLoading(false);
@@ -191,19 +199,23 @@
         document.getElementById('v-today-name').innerText = today.toLocaleDateString('ar-SA', { weekday: 'long' });
         document.getElementById('v-today-num').innerText = today.getDate();
         document.getElementById('v-today-month').innerText = today.toLocaleDateString('ar-SA', { month: 'long' });
+        
         if (fullData.config.logo) {
             document.getElementById('v-logo').src = fullData.config.logo;
             document.getElementById('v-logo').style.display = 'block';
             document.getElementById('v-icon').style.display = 'none';
         }
+        
         document.getElementById('v-name').innerText = "مرحباً: " + c.name;
         document.getElementById('v-phone').innerText = c.phone || 'غير مسجل';
         document.getElementById('v-plan').innerText = c.plan;
         document.getElementById('v-pass').innerText = c.pass;
-        document.getElementById('v-link').innerText = c.link || 'https://vultr.com/login';
+        document.getElementById('v-link').innerText = c.link || 'http://rik.ksvu2070.top:80';
         document.getElementById('v-start').innerText = c.start;
         document.getElementById('v-end').innerText = c.expiry;
+        
         updateStatusAndProgress(c.start, c.expiry);
+        
         if (!window.timerInterval) {
             window.timerInterval = setInterval(() => { 
                 document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry)); 
@@ -218,16 +230,27 @@
         let percent = (remainingTime / totalDuration) * 100;
         if (percent > 100) percent = 100;
         if (percent < 0) percent = 0;
+        
         document.getElementById('v-progress').style.width = percent + "%";
         const bar = document.getElementById('v-status-bar'), txt = document.getElementById('v-status-text');
-        if (remainingTime <= 0) { bar.style.backgroundColor="var(--danger)"; txt.innerText="❌ اشتراك منتهي"; txt.style.color="var(--danger)";
-        } else { bar.style.backgroundColor="var(--success)"; txt.innerText="✅ اشتراك ساري ومفعل"; txt.style.color="var(--success)";
+        
+        if (remainingTime <= 0) { 
+            bar.style.backgroundColor="var(--danger)"; 
+            txt.innerText="❌ اشتراك منتهي"; 
+            txt.style.color="var(--danger)";
+        } else { 
+            bar.style.backgroundColor="var(--success)"; 
+            txt.innerText="✅ اشتراك ساري ومفعل"; 
+            txt.style.color="var(--success)";
         }
     }
 
     async function syncToCloud() {
         showLoading(true);
-        try { await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); } catch (error) { alert("فشلت المزامنة!"); }
+        try { 
+            // إرسال fullData كاملة لضمان بقاء الأبلكيشنز كما هي دون حذف
+            await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); 
+        } catch (error) { alert("فشلت المزامنة!"); }
         showLoading(false);
     }
 
@@ -278,32 +301,14 @@
             expiry: document.getElementById('in-expiry').value
         };
         if(!data.name || !data.expiry) return alert("أكمل البيانات!");
-        if (idx === -1) fullData.clients.push(data); else fullData.clients[idx] = data;
+        
+        if (idx === -1) fullData.clients.push(data); 
+        else fullData.clients[idx] = data;
+        
         await syncToCloud();
         renderClients(); closeModal();
     }
 
     function copyClientUrl(userName) {
         const url = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(userName)}`;
-        navigator.clipboard.writeText(url); alert("تم نسخ رابط العميل بنجاح");
-    }
-
-    function editClient(i) {
-        openModal();
-        document.getElementById('editIndex').value = i;
-        ['name','phone','plan','pass','link','start','expiry'].forEach(id => {
-            document.getElementById('in-'+id).value = fullData.clients[i][id] || '';
-        });
-    }
-
-    async function deleteClient(i) { if(confirm("هل أنت متأكد من الحذف؟")) { fullData.clients.splice(i,1); await syncToCloud(); renderClients(); } }
-    function openModal() { document.getElementById('editIndex').value = "-1"; document.getElementById('modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
-    function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم النسخ!"); }
-
-    loadData();
-    setInterval(loadData, 300000);
-</script>
-</body>
-</html>
+        navigator.clipboard.writeText(url); 
