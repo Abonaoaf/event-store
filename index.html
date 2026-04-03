@@ -32,7 +32,7 @@
         .label { color: #64748b; font-size: 0.7rem; font-weight: bold; }
         .value { font-weight: 600; color: #1e293b; font-size: 0.9rem; word-break: break-all; }
         .copy-btn { background: white; border: 1px solid #e2e8f0; color: var(--primary); cursor: pointer; padding: 6px 10px; border-radius: 8px; margin-right: 5px; }
-        .timer-section { background: #f1f5f9; padding: 15px; border-radius: 16px; text-align: center; margin: 15px 0; border: 1px solid #e2e8f0; }
+        .timer-section { background: #f1f5f9; padding: 15px; border-radius: 166px; text-align: center; margin: 15px 0; border: 1px solid #e2e8f0; }
         .timer-display { display: flex; justify-content: center; gap: 5px; margin-top: 10px; flex-wrap: wrap; direction: ltr; }
         .time-unit { background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid #e2e8f0; min-width: 42px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; }
         .time-num { display: block; font-size: 1rem; font-weight: bold; color: var(--primary); line-height: 1; }
@@ -76,7 +76,7 @@
             </div>
         </div>
         <h2 id="v-name"></h2>
-        <div class="welcome-msg">
+        <div class="welcome-box">
             <span class="welcome-family">في أسرة فولتشر</span>
             نحن سعداء بانضمامك إلينا ونتطلع لخدمتك بأفضل ما لدينا
             <span class="dashboard-title">لوحة معلوماتك الشخصية</span>
@@ -180,22 +180,21 @@
         document.getElementById('v-start').innerText = c.start; document.getElementById('v-end').innerText = c.expiry;
         
         const updateAll = () => {
-            const p = updateStatusAndProgress(c.start, c.expiry, 'v-progress', 'v-status-bar', 'v-status-text');
+            updateStatusAndProgress(c.start, c.expiry);
             document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry));
         };
         updateAll(); setInterval(updateAll, 1000);
     }
 
-    function updateStatusAndProgress(start, expiry, progressId, barId, textId) {
+    function updateStatusAndProgress(start, expiry) {
         const now = new Date().getTime(), startDate = new Date(start).getTime(), endDate = new Date(expiry).getTime();
         const total = endDate - startDate, remain = endDate - now;
         let p = (remain / total) * 100; p = p > 100 ? 100 : (p < 0 ? 0 : p);
-        const prog = document.getElementById(progressId);
+        const prog = document.getElementById('v-progress');
         if(prog) prog.style.width = p + "%";
-        const bar = document.getElementById(barId), txt = document.getElementById(textId);
+        const bar = document.getElementById('v-status-bar'), txt = document.getElementById('v-status-text');
         if (bar) bar.style.backgroundColor = remain <= 0 ? "var(--danger)" : "var(--success)";
         if (txt) { txt.innerText = remain <= 0 ? "❌ اشتراكك منتهي" : "✅ اشتراكك ساري ومفعل"; txt.style.color = remain <= 0 ? "var(--danger)" : "var(--success)"; }
-        return p;
     }
 
     function renderClients() {
@@ -245,4 +244,7 @@
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
     function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
     function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم النسخ!"); }
-  
+    loadData();
+</script>
+</body>
+</html>
