@@ -10,8 +10,8 @@
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; color: var(--text); }
         .status-bar { height: 6px; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
         .status-msg { font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; padding: 5px 15px; border-radius: 20px; display: inline-block; }
-        .progress-container { width: 100%; height: 10px; background: var(--danger); border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid #ddd; }
-        .progress-fill { height: 100%; background: var(--success); width: 100%; transition: width 1s linear; float: right; }
+        .progress-container { width: 100%; height: 10px; background: #eee; border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid #ddd; position: relative; }
+        .progress-fill { height: 100%; transition: width 1s linear; float: right; }
         .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -60,6 +60,7 @@
 </head>
 <body>
 <div id="loading" class="loading-overlay"><div class="spinner"></div><p>جاري مزامنة البيانات السحابية...</p></div>
+
 <div id="clientView" class="client-view">
     <div id="v-status-bar" class="status-bar"></div>
     <div class="client-header">
@@ -75,8 +76,8 @@
             </div>
         </div>
         <h2 id="v-name"></h2>
-        <div class="welcome-msg🤝">
-            <span class="welcome-family">في أسرة فولتشر</span>
+        <div class="welcome-msg">
+            <span class="welcome-family">في أسرة فولتشر 🤝</span>
             نحن سعداء بانضمامك إلينا ونتطلع لخدمتك بأفضل ما لدينا
             <span class="dashboard-title">لوحة معلوماتك الشخصية</span>
         </div>
@@ -98,6 +99,7 @@
         <a href="https://whatsapp.com/channel/0029VaFYcHcAO7RGw0O0QM1E" class="btn-contact" style="background:var(--channel);" target="_blank"><i class="fas fa-bullhorn"></i> تابعنا على قناة قبل الحدث</a>
     </div>
 </div>
+
 <div id="adminPanel" class="admin-panel">
     <div class="admin-header">
         <div class="admin-top">
@@ -111,6 +113,7 @@
     </div>
     <div id="clientsList" class="clients-list"></div>
 </div>
+
 <div id="modal" class="modal">
     <div class="modal-content">
         <h3 id="modalTitle">بيانات المشترك</h3><input type="hidden" id="editIndex">
@@ -129,37 +132,38 @@
         </div>
     </div>
 </div>
+
 <script>
     const ADMIN_KEY = "AboNawaf_Platform_2026";
     const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/.json";
     let fullData = { clients: [], apps: [], config: { logo: "" } };
     const params = new URLSearchParams(window.location.search);
+
     async function loadData() {
         const isInitialLoad = !document.getElementById('clientView').style.display && !document.getElementById('adminPanel').style.display;
         if (isInitialLoad) showLoading(true);
         try {
             const response = await fetch(DB_URL);
             const data = await response.json();
-            if (data) {
-                fullData = { ...fullData, ...data };
-            }
+            if (data) { fullData = { ...fullData, ...data }; }
             const user = params.get('user'), admin = params.get('admin');
             if (user) updateClientViewOnly(decodeURIComponent(user));
-            else if (admin === ADMIN_KEY) { 
-                renderClients(); document.getElementById('adminPanel').style.display = 'block'; setupLogoUploader();
-            } else document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>⚠️ وصول غير مصرح به</h1></div>";
+            else if (admin === ADMIN_KEY) { renderClients(); document.getElementById('adminPanel').style.display = 'block'; setupLogoUploader(); }
+            else document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>⚠️ وصول غير مصرح به</h1></div>";
         } catch (error) { console.error("Error loading data"); }
         if (isInitialLoad) showLoading(false);
     }
+
     function setupLogoUploader() {
         document.getElementById('logoInput').addEventListener('change', function(e) {
             const file = e.target.files[0], reader = new FileReader();
             reader.onload = async function(event) {
-                fullData.config.logo = event.target.result; await syncToCloud(); alert("تم تحديث الشعار بنجاح!");
+                fullData.config.logo = event.target.result; await syncToCloud(); alert("تم تحديث الشعار!");
             };
             reader.readAsDataURL(file);
         });
     }
+
     function updateClientViewOnly(userId) {
         const c = fullData.clients.find(item => item.name === userId);
         if (!c) { document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>المشترك غير موجود</h1></div>"; return; }
@@ -176,22 +180,56 @@
         document.getElementById('v-plan').innerText = c.plan; document.getElementById('v-pass').innerText = c.pass;
         document.getElementById('v-link').innerText = c.link || 'http://rik.ksvu2070.top:80';
         document.getElementById('v-start').innerText = c.start; document.getElementById('v-end').innerText = c.expiry;
-        updateStatusAndProgress(c.start, c.expiry);
-        if (!window.timerInterval) {
-            window.timerInterval = setInterval(() => { 
-                document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry)); updateStatusAndProgress(c.start, c.expiry);
-            }, 1000);
-        }
+        updateStatusAndProgress(c.start, c.expiry, 'v-progress', 'v-status-bar', 'v-status-text');
+        setInterval(() => { 
+            document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry)); 
+            updateStatusAndProgress(c.start, c.expiry, 'v-progress', 'v-status-bar', 'v-status-text');
+        }, 1000);
     }
-    function updateStatusAndProgress(start, expiry) {
+
+    function updateStatusAndProgress(start, expiry, progressId, barId, textId) {
         const now = new Date().getTime(), startDate = new Date(start).getTime(), endDate = new Date(expiry).getTime();
         const total = endDate - startDate, remain = endDate - now;
         let p = (remain / total) * 100; p = p > 100 ? 100 : (p < 0 ? 0 : p);
-        document.getElementById('v-progress').style.width = p + "%";
-        const bar = document.getElementById('v-status-bar'), txt = document.getElementById('v-status-text');
-        if (remain <= 0) { bar.style.backgroundColor="var(--danger)"; txt.innerText="❌ اشتراكك منتهي"; txt.style.color="var(--danger)"; }
-        else { bar.style.backgroundColor="var(--success)"; txt.innerText="✅ اشتراكك ساري ومفعل"; txt.style.color="var(--success)"; }
+        const prog = document.getElementById(progressId);
+        if(prog) {
+            prog.style.width = p + "%";
+            prog.style.backgroundColor = remain <= 0 ? "var(--danger)" : "var(--success)";
+        }
+        const bar = document.getElementById(barId), txt = document.getElementById(textId);
+        if (bar) bar.style.backgroundColor = remain <= 0 ? "var(--danger)" : "var(--success)";
+        if (txt) {
+            txt.innerText = remain <= 0 ? "❌ اشتراكك منتهي" : "✅ اشتراكك ساري ومفعل";
+            txt.style.color = remain <= 0 ? "var(--danger)" : "var(--success)";
+        }
+        return p;
     }
+
+    function renderClients() {
+        const list = document.getElementById('clientsList');
+        list.innerHTML = (fullData.clients || []).map((c, i) => {
+            const now = new Date().getTime(), start = new Date(c.start).getTime(), end = new Date(c.expiry).getTime();
+            let p = ((end - now) / (end - start)) * 100;
+            p = p > 100 ? 100 : (p < 0 ? 0 : p);
+            const color = (end - now) <= 0 ? "var(--danger)" : "var(--success)";
+            return `
+            <div class="client-item">
+                <h3 style="color:var(--primary); margin:0;">${c.name}</h3>
+                <div class="progress-container" style="height:6px; margin:10px 0;">
+                    <div style="width:${p}%; background:${color}; height:100%; float:right;"></div>
+                </div>
+                <div style="font-size:0.8rem; background:#f8fafc; padding:8px; border-radius:8px;">
+                    <b>النهاية:</b> ${c.expiry} | <b>الجوال:</b> ${c.phone}
+                </div>
+                <div class="actions">
+                    <button class="btn-sm btn-link" onclick="copyClientUrl('${c.name}')">الرابط</button>
+                    <button class="btn-sm btn-edit" onclick="editClient(${i})">تعديل</button>
+                    <button class="btn-sm btn-del" onclick="deleteClient(${i})">حذف</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
     async function syncToCloud() {
         showLoading(true); try { await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); } catch (error) { alert("فشلت المزامنة!"); } showLoading(false);
     }
@@ -203,18 +241,6 @@
     function getTimeHTML(t) {
         if (!t) return `<span style="color:red; font-weight:bold;">الاشتراك منتهي</span>`;
         return ['سنة','شهر','يوم','ساعة','دقيقة','ثانية'].map(l => `<div class="time-unit"><span class="time-num">${t[l]}</span><span class="time-lab">${l}</span></div>`).join('');
-    }
-    function renderClients() {
-        const list = document.getElementById('clientsList');
-        list.innerHTML = (fullData.clients || []).map((c, i) => `
-            <div class="client-item">
-                <h3 style="color:var(--primary); margin:0;">${c.name}</h3>
-                <div class="actions">
-                    <button class="btn-sm btn-link" onclick="copyClientUrl('${c.name}')">الرابط</button>
-                    <button class="btn-sm btn-edit" onclick="editClient(${i})">تعديل</button>
-                    <button class="btn-sm btn-del" onclick="deleteClient(${i})">حذف</button>
-                </div>
-            </div>`).join('');
     }
     async function saveClient() {
         const idx = parseInt(document.getElementById('editIndex').value);
