@@ -30,7 +30,7 @@
         .date-num { font-size: 1.6rem; font-weight: 900; color: #333; line-height: 1.1; }
         .date-month { font-size: 0.75rem; color: #666; font-weight: 600; }
         
-        #v-name { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
+        #v-name-container { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
 
         .welcome-msg { margin-top: 15px; font-size: 0.95rem; color: #4a5568; line-height: 1.6; }
         .welcome-family { font-weight: 800; color: #ff0000; display: block; margin-bottom: 20px; font-size: 1.1rem; }
@@ -48,7 +48,7 @@
         .time-num { display: block; font-size: 1rem; font-weight: bold; color: var(--primary); line-height: 1; }
         .time-lab { font-size: 0.6rem; color: #718096; margin-top: 3px; display: block; font-weight: bold; }
         
-        .btn-contact { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-bottom: 10px; color: white; font-size: 0.9rem; }
+        .btn-contact { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-bottom: 10px; color: white; font-size: 0.9rem; border: none; cursor: pointer; }
         
         .admin-panel { width: 100%; max-width: 1100px; display: none; }
         .admin-header { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -110,6 +110,7 @@
         <div class="info-row"><div><span class="label">رابط الدخول</span><br><span id="v-link" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-link')"><i class="far fa-copy"></i></button></div>
         
         <div class="timer-section"><span class="label">الوقت المتبقي للانتهاء</span><div id="timer" class="timer-display"></div></div>
+        
         <a href="https://abonaoaf.github.io/az/" class="btn-contact" style="background: #4338ca; border: 2px solid #fff;">
             <i class="fas fa-th-large"></i> متجر تطبيقات فولتشر 
         </a>
@@ -159,8 +160,8 @@
     const params = new URLSearchParams(window.location.search);
 
     async function loadData() {
-        const isInitialLoad = !document.getElementById('clientView').style.display && !document.getElementById('adminPanel').style.display;
-        if (isInitialLoad) showLoading(true);
+        const isInitialLoad = true;
+        showLoading(true);
         try {
             const response = await fetch(DB_URL);
             const data = await response.json();
@@ -179,10 +180,10 @@
                 document.getElementById('adminPanel').style.display = 'block';
                 setupLogoUploader();
             } else {
-                document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>⚠️ وصول غير مصرح به</h1><p>يرجى استخدام الرابط الصحيح.</p></div>";
+                document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>⚠️ وصول غير مصرح به</h1></div>";
             }
-        } catch (error) { console.error("Error loading data"); }
-        if (isInitialLoad) showLoading(false);
+        } catch (error) { console.error("Load error"); }
+        showLoading(false);
     }
 
     function setupLogoUploader() {
@@ -192,7 +193,7 @@
             reader.onload = async function(event) {
                 fullData.config.logo = event.target.result;
                 await syncToCloud();
-                alert("تم تحديث الشعار بنجاح!");
+                alert("تم تحديث الشعار!");
             };
             reader.readAsDataURL(file);
         });
@@ -204,6 +205,7 @@
             document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>المشترك غير موجود</h1></div>";
             return;
         }
+        
         document.getElementById('clientView').style.display = 'block';
         const today = new Date();
         document.getElementById('v-today-name').innerText = today.toLocaleDateString('ar-SA', { weekday: 'long' });
@@ -216,7 +218,7 @@
             document.getElementById('v-icon').style.display = 'none';
         }
         
-        // تعديل هنا لعرض الاسم داخل الـ span الخاص به فقط
+        // تحديث الاسم فقط داخل الـ span
         document.getElementById('v-name').innerText = c.name;
         
         document.getElementById('v-phone').innerText = c.phone || 'غير مسجل';
@@ -230,7 +232,8 @@
         
         if (!window.timerInterval) {
             window.timerInterval = setInterval(() => { 
-                document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry)); 
+                const timeData = calculateTime(c.expiry);
+                document.getElementById('timer').innerHTML = getTimeHTML(timeData); 
                 updateStatusAndProgress(c.start, c.expiry);
             }, 1000);
         }
@@ -248,11 +251,11 @@
         
         if (remainingTime <= 0) { 
             bar.style.backgroundColor="var(--danger)"; 
-            txt.innerText="❌ اشتراكك منتهي"; 
+            txt.innerText="❌ اشتراك منتهي"; 
             txt.style.color="var(--danger)";
         } else { 
             bar.style.backgroundColor="var(--success)"; 
-            txt.innerText="✅ اشتراكك ساري ومفعل"; 
+            txt.innerText="✅ اشتراك ساري ومفعل"; 
             txt.style.color="var(--success)";
         }
     }
@@ -339,7 +342,7 @@
     function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
     function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم النسخ!"); }
 
-    loadData();
+    window.onload = loadData;
 </script>
 </body>
 </html>
