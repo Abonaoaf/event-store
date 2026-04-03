@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة المشتركين | فولتشر</title>
+    <title>منصة المشتركين | قبل الحدث - فولتشر</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { 
@@ -18,7 +18,24 @@
         }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; color: var(--text); }
         
-        /* التنسيق الجديد لشريط الحالة */
+        /* تنسيق رأس البطاقة مع الشعار الجديد */
+        .client-header { 
+            background: linear-gradient(135deg, var(--primary), #0056b3); 
+            color: white; 
+            padding: 15px 25px 25px 25px; /* تم تعديل التباعد ليناسب الشعار */
+            text-align: center; 
+            position: relative;
+        }
+        
+        /* تنسيق شعار قبل الحدث */
+        .brand-logo {
+            max-width: 150px; /* التحكم في عرض الشعار */
+            height: auto;
+            display: block;
+            margin: 0 auto 10px auto; /* تمركز الشعار وإضافة هامش سفلي */
+        }
+        
+        /* تنسيق شريط الحالة البصري */
         .status-bar {
             height: 6px;
             width: 100%;
@@ -45,7 +62,7 @@
         .time-lab { font-size: 0.6rem; color: #718096; margin-top: 3px; display: block; font-weight: bold; }
         
         .client-view { background: white; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 420px; overflow: hidden; display: none; align-self: center; border: 1px solid rgba(0,0,0,0.05); position: relative; }
-        .client-header { background: linear-gradient(135deg, var(--primary), #0056b3); color: white; padding: 25px; text-align: center; padding-top: 35px; }
+        
         .info-body { padding: 20px; }
         .info-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #edf2f7; }
         .label { color: #64748b; font-size: 0.7rem; font-weight: bold; }
@@ -82,8 +99,9 @@
     <div id="v-status-bar" class="status-bar"></div>
     
     <div class="client-header">
-        <i class="fas fa-user-shield fa-3x"></i>
-        <h2 id="v-name" style="margin:10px 0 0 0"></h2>
+        <img src="https://lh3.googleusercontent.com/d/1XfH_fK6kLp5F_y0Y7iV84b1V_N57YmB4" alt="لوغو قبل الحدث" class="brand-logo">
+        
+        <h2 id="v-name" style="margin:0; font-size: 1.2rem;"></h2>
     </div>
     
     <div class="info-body">
