@@ -8,20 +8,15 @@
     <style>
         :root { --primary: #007bff; --success: #28a745; --bg: #f4f7f6; --whatsapp: #25d366; --channel: #008069; --danger: #dc3545; --text: #2d3748; --warning: #ffc107; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; color: var(--text); }
-        
         .status-bar { height: 6px; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
         .status-msg { font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; padding: 5px 15px; border-radius: 20px; display: inline-block; }
-        
         .progress-container { width: 100%; height: 10px; background: var(--danger); border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid #ddd; }
         .progress-fill { height: 100%; background: var(--success); width: 100%; transition: width 1s linear; float: right; }
-
         .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         .client-view { background: white; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 420px; overflow: hidden; display: none; align-self: center; border: 1px solid rgba(0,0,0,0.05); position: relative; margin: 20px auto; }
         @media (min-width: 768px) { .client-view { max-width: 600px; } }
-
         .client-header { background: white; color: black; padding: 30px 25px; text-align: center; position: relative; border-bottom: 1px solid #eee; }
         .brand-container { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px; }
         .brand-logo, .date-box { width: 100px; height: 100px; background: white; padding: 10px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; }
@@ -30,25 +25,19 @@
         .date-num { font-size: 1.6rem; font-weight: 900; color: #333; line-height: 1.1; }
         .date-month { font-size: 0.75rem; color: #666; font-weight: 600; }
         #v-name { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
-
-        .welcome-msg { margin-top: 15px; font-size: 0.95rem; color: #4a5568; line-height: 1.6; }
         .welcome-family { font-weight: 800; color: #ff0000; display: block; margin-bottom: 20px; font-size: 1.1rem; }
         .dashboard-title { margin-top: 15px; display: block; font-weight: bold; color: var(--primary); font-size: 0.9rem; text-decoration: underline; }
-
         .info-body { padding: 20px; }
         .info-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #edf2f7; }
         .label { color: #64748b; font-size: 0.7rem; font-weight: bold; }
         .value { font-weight: 600; color: #1e293b; font-size: 0.9rem; word-break: break-all; }
         .copy-btn { background: white; border: 1px solid #e2e8f0; color: var(--primary); cursor: pointer; padding: 6px 10px; border-radius: 8px; margin-right: 5px; }
-        
         .timer-section { background: #f1f5f9; padding: 15px; border-radius: 16px; text-align: center; margin: 15px 0; border: 1px solid #e2e8f0; }
         .timer-display { display: flex; justify-content: center; gap: 5px; margin-top: 10px; flex-wrap: wrap; direction: ltr; }
         .time-unit { background: white; padding: 8px 4px; border-radius: 8px; border: 1px solid #e2e8f0; min-width: 42px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; }
         .time-num { display: block; font-size: 1rem; font-weight: bold; color: var(--primary); line-height: 1; }
         .time-lab { font-size: 0.6rem; color: #718096; margin-top: 3px; display: block; font-weight: bold; }
-        
         .btn-contact { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: bold; margin-bottom: 10px; color: white; font-size: 0.9rem; }
-        
         .admin-panel { width: 100%; max-width: 1100px; display: none; }
         .admin-header { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; background: white; padding: 15px 25px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .admin-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
@@ -61,7 +50,6 @@
         .btn-edit { background: #f0f7ff; color: #007bff; }
         .btn-del { background: #fff1f2; color: #e11d48; }
         .btn-link { background: #f0fdf4; color: #16a34a; border: 1px solid #16a34a; }
-
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -109,7 +97,6 @@
             <i class="fas fa-th-large"></i> متجر تطبيقات فولتشر 
         </a>
         <a href="https://wa.me/966594393012" class="btn-contact" style="background:var(--whatsapp);" target="_blank"><i class="fab fa-whatsapp"></i> الدعم الفني المباشر</a>
-        <a href="https://whatsapp.com/channel/0029VaFYcHcAO7RGw0O0QM1E" class="btn-contact" style="background:var(--channel);" target="_blank"><i class="fas fa-bullhorn"></i> تابعنا على قناة قبل الحدث</a>
     </div>
 </div>
 
@@ -150,21 +137,18 @@
     const ADMIN_KEY = "AboNawaf_Platform_2026";
     const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/.json";
     
-    // تم تعديل هذا الكائن ليشمل apps لضمان عدم حذفها
+    // تعريف الكائن ليشمل كافة الأقسام لضمان عدم الحذف
     let fullData = { clients: [], apps: [], config: { logo: "" } };
     const params = new URLSearchParams(window.location.search);
 
     async function loadData() {
-        const isInitialLoad = !document.getElementById('clientView').style.display && !document.getElementById('adminPanel').style.display;
-        if (isInitialLoad) showLoading(true);
+        showLoading(true);
         try {
             const response = await fetch(DB_URL);
             const data = await response.json();
             if (data) {
-                // دمج البيانات الجديدة مع الحفاظ على الأقسام الأخرى مثل apps
+                // دمج البيانات المستلمة مع الحفاظ على الأقسام غير الموجودة في التحديث
                 fullData = { ...fullData, ...data };
-                if (!fullData.clients) fullData.clients = [];
-                if (!fullData.config) fullData.config = { logo: "" };
             }
             
             const user = params.get('user');
@@ -177,10 +161,18 @@
                 document.getElementById('adminPanel').style.display = 'block';
                 setupLogoUploader();
             } else {
-                document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>⚠️ وصول غير مصرح به</h1><p>يرجى استخدام الرابط الصحيح.</p></div>";
+                document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>⚠️ وصول غير مصرح به</h1></div>";
             }
         } catch (error) { console.error("Error loading data"); }
-        if (isInitialLoad) showLoading(false);
+        showLoading(false);
+    }
+
+    async function syncToCloud() {
+        showLoading(true);
+        try { 
+            await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
+        } catch (error) { alert("فشلت المزامنة!"); }
+        showLoading(false);
     }
 
     function setupLogoUploader() {
@@ -190,7 +182,7 @@
             reader.onload = async function(event) {
                 fullData.config.logo = event.target.result;
                 await syncToCloud();
-                alert("تم تحديث الشعار بنجاح!");
+                alert("تم تحديث الشعار!");
             };
             reader.readAsDataURL(file);
         });
@@ -207,13 +199,14 @@
         document.getElementById('v-today-name').innerText = today.toLocaleDateString('ar-SA', { weekday: 'long' });
         document.getElementById('v-today-num').innerText = today.getDate();
         document.getElementById('v-today-month').innerText = today.toLocaleDateString('ar-SA', { month: 'long' });
+        
         if (fullData.config.logo) {
             document.getElementById('v-logo').src = fullData.config.logo;
             document.getElementById('v-logo').style.display = 'block';
             document.getElementById('v-icon').style.display = 'none';
         }
         
-        document.getElementById('v-name').innerText = "مرحباً بك معنا " + c.name;
+        document.getElementById('v-name').innerText = "مرحباً " + c.name;
         document.getElementById('v-phone').innerText = c.phone || 'غير مسجل';
         document.getElementById('v-plan').innerText = c.plan;
         document.getElementById('v-pass').innerText = c.pass;
@@ -222,42 +215,21 @@
         document.getElementById('v-end').innerText = c.expiry;
         
         updateStatusAndProgress(c.start, c.expiry);
-        
-        if (!window.timerInterval) {
-            window.timerInterval = setInterval(() => { 
-                document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry)); 
-                updateStatusAndProgress(c.start, c.expiry);
-            }, 1000);
-        }
+        setInterval(() => { 
+            document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry)); 
+            updateStatusAndProgress(c.start, c.expiry);
+        }, 1000);
     }
 
     function updateStatusAndProgress(start, expiry) {
         const now = new Date().getTime(), startDate = new Date(start).getTime(), endDate = new Date(expiry).getTime();
-        const totalDuration = endDate - startDate, remainingTime = endDate - now;
-        let percent = (remainingTime / totalDuration) * 100;
-        if (percent > 100) percent = 100;
-        if (percent < 0) percent = 0;
-        
-        document.getElementById('v-progress').style.width = percent + "%";
+        const total = endDate - startDate, remain = endDate - now;
+        let p = (remain / total) * 100;
+        p = p > 100 ? 100 : (p < 0 ? 0 : p);
+        document.getElementById('v-progress').style.width = p + "%";
         const bar = document.getElementById('v-status-bar'), txt = document.getElementById('v-status-text');
-        
-        if (remainingTime <= 0) { 
-            bar.style.backgroundColor="var(--danger)";
-            txt.innerText="❌ اشتراكك منتهي"; 
-            txt.style.color="var(--danger)";
-        } else { 
-            bar.style.backgroundColor="var(--success)";
-            txt.innerText="✅ اشتراكك ساري ومفعل"; 
-            txt.style.color="var(--success)";
-        }
-    }
-
-    async function syncToCloud() {
-        showLoading(true);
-        try { 
-            await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
-        } catch (error) { alert("فشلت المزامنة!"); }
-        showLoading(false);
+        if (remain <= 0) { bar.style.background="var(--danger)"; txt.innerText="❌ منتهي"; txt.style.color="var(--danger)"; }
+        else { bar.style.background="var(--success)"; txt.innerText="✅ ساري"; txt.style.color="var(--success)"; }
     }
 
     function calculateTime(expiry) {
@@ -268,31 +240,21 @@
     }
 
     function getTimeHTML(t) {
-        if (!t) return `<span style="color:red; font-weight:bold;">الاشتراك منتهي</span>`;
+        if (!t) return `<span style="color:red;">الاشتراك منتهي</span>`;
         return ['سنة','شهر','يوم','ساعة','دقيقة','ثانية'].map(l => `<div class="time-unit"><span class="time-num">${t[l]}</span><span class="time-lab">${l}</span></div>`).join('');
     }
 
     function renderClients() {
         const list = document.getElementById('clientsList');
-        list.innerHTML = (fullData.clients || []).map((c, i) => {
-            const now = new Date().getTime(), startDate = new Date(c.start).getTime(), endDate = new Date(c.expiry).getTime();
-            const totalDuration = endDate - startDate, remainingTime = endDate - now;
-            let percent = (remainingTime / totalDuration) * 100;
-            if (percent > 100) percent = 100; if (percent < 0) percent = 0;
-             return `
+        list.innerHTML = (fullData.clients || []).map((c, i) => `
             <div class="client-item">
-                <h3 style="color:var(--primary); margin:0;">${c.name}</h3>
-                <div style="background:var(--danger); height:6px; border-radius:10px; margin:8px 0; overflow:hidden;"><div style="background:var(--success); height:100%; width:${percent}%; float:right;"></div></div>
-                <div style="background:#f8fafc; padding:10px; border-radius:10px; font-size:0.8rem; margin:10px 0;">
-                  <b>النهاية:</b> ${c.expiry} | <b>الجوال:</b> ${c.phone}
-                </div>
+                <h3>${c.name}</h3>
                 <div class="actions">
-                    <button class="btn-sm btn-link" onclick="copyClientUrl('${c.name}')"><i class="fas fa-link"></i> الرابط</button>
-                    <button class="btn-sm btn-edit" onclick="editClient(${i})"><i class="fas fa-edit"></i></button>
-                     <button class="btn-sm btn-del" onclick="deleteClient(${i})"><i class="fas fa-trash"></i></button>
+                    <button class="btn-sm btn-link" onclick="copyClientUrl('${c.name}')">الرابط</button>
+                    <button class="btn-sm btn-edit" onclick="editClient(${i})">تعديل</button>
+                    <button class="btn-sm btn-del" onclick="deleteClient(${i})">حذف</button>
                 </div>
-            </div>`;
-        }).join('');
+            </div>`).join('');
     }
 
     async function saveClient() {
@@ -304,4 +266,22 @@
             pass: document.getElementById('in-pass').value,
             link: document.getElementById('in-link').value,
             start: document.getElementById('in-start').value,
-            expir
+            expiry: document.getElementById('in-expiry').value
+        };
+        if(!data.name || !data.expiry) return alert("أكمل البيانات");
+        if (idx === -1) fullData.clients.push(data); else fullData.clients[idx] = data;
+        await syncToCloud(); renderClients(); closeModal();
+    }
+
+    function copyClientUrl(n) { navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(n)}`); alert("تم النسخ"); }
+    function editClient(i) { openModal(); document.getElementById('editIndex').value = i; ['name','phone','plan','pass','link','start','expiry'].forEach(id => document.getElementById('in-'+id).value = fullData.clients[i][id] || ''); }
+    async function deleteClient(i) { if(confirm("حذف؟")) { fullData.clients.splice(i,1); await syncToCloud(); renderClients(); } }
+    function openModal() { document.getElementById('editIndex').value = "-1"; document.getElementById('modal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
+    function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم!"); }
+
+    loadData();
+</script>
+</body>
+</html>
