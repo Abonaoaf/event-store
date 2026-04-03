@@ -29,7 +29,6 @@
         .date-day-name { font-size: 0.65rem; color: var(--danger); font-weight: bold; }
         .date-num { font-size: 1.6rem; font-weight: 900; color: #333; line-height: 1.1; }
         .date-month { font-size: 0.75rem; color: #666; font-weight: 600; }
-        
         #v-name { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
 
         .welcome-msg { margin-top: 15px; font-size: 0.95rem; color: #4a5568; line-height: 1.6; }
@@ -89,15 +88,12 @@
                 <span class="date-month" id="v-today-month"></span>
             </div>
         </div>
-        
-        <h2 id="v-name-container">مرحباً بك معنا 🤝 <span id="v-name"></span></h2>
-        
-        <div class="welcome-msg">
+        <h2 id="v-name"></h2>
+        <div class="welcome-msg🤝">
             <span class="welcome-family">في أسرة فولتشر</span>
             نحن سعداء بانضمامك إلينا ونتطلع لخدمتك بأفضل ما لدينا
             <span class="dashboard-title">لوحة معلوماتك الشخصية</span>
         </div>
-
         <div class="progress-container"><div id="v-progress" class="progress-fill"></div></div>
     </div>
     <div class="info-body">
@@ -108,7 +104,6 @@
         <div class="info-row"><div><span class="label">اسم المستخدم</span><br><span id="v-plan" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-plan')"><i class="far fa-copy"></i></button></div>
         <div class="info-row"><div><span class="label">كلمة السر</span><br><span id="v-pass" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-pass')"><i class="far fa-copy"></i></button></div>
         <div class="info-row"><div><span class="label">رابط الدخول</span><br><span id="v-link" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-link')"><i class="far fa-copy"></i></button></div>
-        
         <div class="timer-section"><span class="label">الوقت المتبقي للانتهاء</span><div id="timer" class="timer-display"></div></div>
         <a href="https://abonaoaf.github.io/az/" class="btn-contact" style="background: #4338ca; border: 2px solid #fff;">
             <i class="fas fa-th-large"></i> متجر تطبيقات فولتشر 
@@ -155,6 +150,7 @@
     const ADMIN_KEY = "AboNawaf_Platform_2026";
     const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/.json";
     
+    // تم تعديل هذا الكائن ليشمل apps لضمان عدم حذفها
     let fullData = { clients: [], apps: [], config: { logo: "" } };
     const params = new URLSearchParams(window.location.search);
 
@@ -165,8 +161,10 @@
             const response = await fetch(DB_URL);
             const data = await response.json();
             if (data) {
-                fullData.clients = data.clients || [];
-                fullData.config = data.config || { logo: "" };
+                // دمج البيانات الجديدة مع الحفاظ على الأقسام الأخرى مثل apps
+                fullData = { ...fullData, ...data };
+                if (!fullData.clients) fullData.clients = [];
+                if (!fullData.config) fullData.config = { logo: "" };
             }
             
             const user = params.get('user');
@@ -209,16 +207,13 @@
         document.getElementById('v-today-name').innerText = today.toLocaleDateString('ar-SA', { weekday: 'long' });
         document.getElementById('v-today-num').innerText = today.getDate();
         document.getElementById('v-today-month').innerText = today.toLocaleDateString('ar-SA', { month: 'long' });
-        
         if (fullData.config.logo) {
             document.getElementById('v-logo').src = fullData.config.logo;
             document.getElementById('v-logo').style.display = 'block';
             document.getElementById('v-icon').style.display = 'none';
         }
         
-        // تعديل هنا لعرض الاسم داخل الـ span الخاص به فقط
-        document.getElementById('v-name').innerText = c.name;
-        
+        document.getElementById('v-name').innerText = "مرحباً بك معنا " + c.name;
         document.getElementById('v-phone').innerText = c.phone || 'غير مسجل';
         document.getElementById('v-plan').innerText = c.plan;
         document.getElementById('v-pass').innerText = c.pass;
@@ -247,12 +242,12 @@
         const bar = document.getElementById('v-status-bar'), txt = document.getElementById('v-status-text');
         
         if (remainingTime <= 0) { 
-            bar.style.backgroundColor="var(--danger)"; 
-            txt.innerText="❌ اشتراك منتهي"; 
+            bar.style.backgroundColor="var(--danger)";
+            txt.innerText="❌ اشتراكك منتهي"; 
             txt.style.color="var(--danger)";
         } else { 
-            bar.style.backgroundColor="var(--success)"; 
-            txt.innerText="✅ اشتراك ساري ومفعل"; 
+            bar.style.backgroundColor="var(--success)";
+            txt.innerText="✅ اشتراكك ساري ومفعل"; 
             txt.style.color="var(--success)";
         }
     }
@@ -260,7 +255,7 @@
     async function syncToCloud() {
         showLoading(true);
         try { 
-            await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); 
+            await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
         } catch (error) { alert("فشلت المزامنة!"); }
         showLoading(false);
     }
@@ -284,17 +279,17 @@
             const totalDuration = endDate - startDate, remainingTime = endDate - now;
             let percent = (remainingTime / totalDuration) * 100;
             if (percent > 100) percent = 100; if (percent < 0) percent = 0;
-            return `
+             return `
             <div class="client-item">
                 <h3 style="color:var(--primary); margin:0;">${c.name}</h3>
                 <div style="background:var(--danger); height:6px; border-radius:10px; margin:8px 0; overflow:hidden;"><div style="background:var(--success); height:100%; width:${percent}%; float:right;"></div></div>
                 <div style="background:#f8fafc; padding:10px; border-radius:10px; font-size:0.8rem; margin:10px 0;">
-                    <b>النهاية:</b> ${c.expiry} | <b>الجوال:</b> ${c.phone}
+                  <b>النهاية:</b> ${c.expiry} | <b>الجوال:</b> ${c.phone}
                 </div>
                 <div class="actions">
                     <button class="btn-sm btn-link" onclick="copyClientUrl('${c.name}')"><i class="fas fa-link"></i> الرابط</button>
                     <button class="btn-sm btn-edit" onclick="editClient(${i})"><i class="fas fa-edit"></i></button>
-                    <button class="btn-sm btn-del" onclick="deleteClient(${i})"><i class="fas fa-trash"></i></button>
+                     <button class="btn-sm btn-del" onclick="deleteClient(${i})"><i class="fas fa-trash"></i></button>
                 </div>
             </div>`;
         }).join('');
@@ -309,5 +304,4 @@
             pass: document.getElementById('in-pass').value,
             link: document.getElementById('in-link').value,
             start: document.getElementById('in-start').value,
-            expiry: document.getElementById('in-expiry').value
-       
+            expir
