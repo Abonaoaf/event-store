@@ -10,8 +10,8 @@
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; color: var(--text); }
         .status-bar { height: 6px; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
         .status-msg { font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; padding: 5px 15px; border-radius: 20px; display: inline-block; }
-        .progress-container { width: 100%; height: 10px; background: #eee; border-radius: 10px; margin: 15px 0; overflow: hidden; border: 1px solid #ddd; position: relative; }
-        .progress-fill { height: 100%; transition: width 1s linear; float: right; }
+        .progress-container { width: 100%; height: 12px; background: var(--danger); border-radius: 10px; margin: 20px 0; overflow: hidden; border: 1px solid #ddd; position: relative; }
+        .progress-fill { height: 100%; background: var(--success); transition: width 1s linear; float: right; }
         .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 1000; display: none; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -24,9 +24,9 @@
         .date-day-name { font-size: 0.65rem; color: var(--danger); font-weight: bold; }
         .date-num { font-size: 1.6rem; font-weight: 900; color: #333; line-height: 1.1; }
         .date-month { font-size: 0.75rem; color: #666; font-weight: 600; }
-        #v-name { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
-        .welcome-family { font-weight: 800; color: #ff0000; display: block; margin-bottom: 20px; font-size: 1.1rem; }
-        .dashboard-title { margin-top: 15px; display: block; font-weight: bold; color: var(--primary); font-size: 0.9rem; text-decoration: underline; }
+        #v-name { margin: 15px 0; color: black; font-weight: 800; font-size: 1.3rem; line-height: 1.4; }
+        .welcome-family { font-weight: 800; color: #ff0000; display: block; margin: 25px 0; font-size: 1.2rem; }
+        .dashboard-title { margin-top: 20px; display: block; font-weight: bold; color: var(--primary); font-size: 0.95rem; text-decoration: underline; }
         .info-body { padding: 20px; }
         .info-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #edf2f7; }
         .label { color: #64748b; font-size: 0.7rem; font-weight: bold; }
@@ -77,7 +77,7 @@
         </div>
         <h2 id="v-name"></h2>
         <div class="welcome-msg">
-            <span class="welcome-family">في أسرة فولتشر 🤝</span>
+            <span class="welcome-family">في أسرة فولتشر</span>
             نحن سعداء بانضمامك إلينا ونتطلع لخدمتك بأفضل ما لدينا
             <span class="dashboard-title">لوحة معلوماتك الشخصية</span>
         </div>
@@ -136,7 +136,7 @@
 <script>
     const ADMIN_KEY = "AboNawaf_Platform_2026";
     const DB_URL = "https://vulture-app-1efba-default-rtdb.firebaseio.com/.json";
-    let fullData = { clients: [], apps: [], config: { logo: "" } };
+    let fullData = { clients: [], config: { logo: "" } };
     const params = new URLSearchParams(window.location.search);
 
     async function loadData() {
@@ -145,7 +145,7 @@
         try {
             const response = await fetch(DB_URL);
             const data = await response.json();
-            if (data) { fullData = { ...fullData, ...data }; }
+            if (data) { fullData.clients = data.clients || []; fullData.config = data.config || { logo: "" }; }
             const user = params.get('user'), admin = params.get('admin');
             if (user) updateClientViewOnly(decodeURIComponent(user));
             else if (admin === ADMIN_KEY) { renderClients(); document.getElementById('adminPanel').style.display = 'block'; setupLogoUploader(); }
@@ -158,7 +158,7 @@
         document.getElementById('logoInput').addEventListener('change', function(e) {
             const file = e.target.files[0], reader = new FileReader();
             reader.onload = async function(event) {
-                fullData.config.logo = event.target.result; await syncToCloud(); alert("تم تحديث الشعار!");
+                fullData.config.logo = event.target.result; await syncToCloud(); alert("تم تحديث الشعار بنجاح!");
             };
             reader.readAsDataURL(file);
         });
@@ -172,19 +172,18 @@
         document.getElementById('v-today-name').innerText = today.toLocaleDateString('ar-SA', { weekday: 'long' });
         document.getElementById('v-today-num').innerText = today.getDate();
         document.getElementById('v-today-month').innerText = today.toLocaleDateString('ar-SA', { month: 'long' });
-        if (fullData.config.logo) {
-            document.getElementById('v-logo').src = fullData.config.logo; document.getElementById('v-logo').style.display = 'block'; document.getElementById('v-icon').style.display = 'none';
-        }
-        document.getElementById('v-name').innerText = "مرحباً بك معنا " + c.name;
+        if (fullData.config.logo) { document.getElementById('v-logo').src = fullData.config.logo; document.getElementById('v-logo').style.display = 'block'; document.getElementById('v-icon').style.display = 'none'; }
+        document.getElementById('v-name').innerText = "مرحباً بك معنا 🤝 " + c.name;
         document.getElementById('v-phone').innerText = c.phone || 'غير مسجل';
         document.getElementById('v-plan').innerText = c.plan; document.getElementById('v-pass').innerText = c.pass;
         document.getElementById('v-link').innerText = c.link || 'http://rik.ksvu2070.top:80';
         document.getElementById('v-start').innerText = c.start; document.getElementById('v-end').innerText = c.expiry;
-        updateStatusAndProgress(c.start, c.expiry, 'v-progress', 'v-status-bar', 'v-status-text');
-        setInterval(() => { 
-            document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry)); 
-            updateStatusAndProgress(c.start, c.expiry, 'v-progress', 'v-status-bar', 'v-status-text');
-        }, 1000);
+        
+        const updateAll = () => {
+            const p = updateStatusAndProgress(c.start, c.expiry, 'v-progress', 'v-status-bar', 'v-status-text');
+            document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry));
+        };
+        updateAll(); setInterval(updateAll, 1000);
     }
 
     function updateStatusAndProgress(start, expiry, progressId, barId, textId) {
@@ -192,16 +191,10 @@
         const total = endDate - startDate, remain = endDate - now;
         let p = (remain / total) * 100; p = p > 100 ? 100 : (p < 0 ? 0 : p);
         const prog = document.getElementById(progressId);
-        if(prog) {
-            prog.style.width = p + "%";
-            prog.style.backgroundColor = remain <= 0 ? "var(--danger)" : "var(--success)";
-        }
+        if(prog) prog.style.width = p + "%";
         const bar = document.getElementById(barId), txt = document.getElementById(textId);
         if (bar) bar.style.backgroundColor = remain <= 0 ? "var(--danger)" : "var(--success)";
-        if (txt) {
-            txt.innerText = remain <= 0 ? "❌ اشتراكك منتهي" : "✅ اشتراكك ساري ومفعل";
-            txt.style.color = remain <= 0 ? "var(--danger)" : "var(--success)";
-        }
+        if (txt) { txt.innerText = remain <= 0 ? "❌ اشتراكك منتهي" : "✅ اشتراكك ساري ومفعل"; txt.style.color = remain <= 0 ? "var(--danger)" : "var(--success)"; }
         return p;
     }
 
@@ -209,16 +202,14 @@
         const list = document.getElementById('clientsList');
         list.innerHTML = (fullData.clients || []).map((c, i) => {
             const now = new Date().getTime(), start = new Date(c.start).getTime(), end = new Date(c.expiry).getTime();
-            let p = ((end - now) / (end - start)) * 100;
-            p = p > 100 ? 100 : (p < 0 ? 0 : p);
-            const color = (end - now) <= 0 ? "var(--danger)" : "var(--success)";
+            let p = ((end - now) / (end - start)) * 100; p = p > 100 ? 100 : (p < 0 ? 0 : p);
             return `
             <div class="client-item">
                 <h3 style="color:var(--primary); margin:0;">${c.name}</h3>
-                <div class="progress-container" style="height:6px; margin:10px 0;">
-                    <div style="width:${p}%; background:${color}; height:100%; float:right;"></div>
+                <div class="progress-container" style="height:8px; margin:12px 0;">
+                    <div style="width:${p}%; background:var(--success); height:100%; float:right;"></div>
                 </div>
-                <div style="font-size:0.8rem; background:#f8fafc; padding:8px; border-radius:8px;">
+                <div style="font-size:0.8rem; background:#f8fafc; padding:10px; border-radius:10px;">
                     <b>النهاية:</b> ${c.expiry} | <b>الجوال:</b> ${c.phone}
                 </div>
                 <div class="actions">
@@ -230,9 +221,7 @@
         }).join('');
     }
 
-    async function syncToCloud() {
-        showLoading(true); try { await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); } catch (error) { alert("فشلت المزامنة!"); } showLoading(false);
-    }
+    async function syncToCloud() { showLoading(true); try { await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); } catch (error) { alert("فشلت المزامنة!"); } showLoading(false); }
     function calculateTime(expiry) {
         const diff = new Date(expiry).getTime() - new Date().getTime(); if (diff <= 0) return null;
         const s = Math.floor(diff/1000), m = Math.floor(s/60), h = Math.floor(m/60), d = Math.floor(h/24);
@@ -244,23 +233,16 @@
     }
     async function saveClient() {
         const idx = parseInt(document.getElementById('editIndex').value);
-        const data = {
-            name: document.getElementById('in-name').value.trim(), phone: document.getElementById('in-phone').value,
-            plan: document.getElementById('in-plan').value, pass: document.getElementById('in-pass').value,
-            link: document.getElementById('in-link').value, start: document.getElementById('in-start').value, expiry: document.getElementById('in-expiry').value
-        };
+        const data = { name: document.getElementById('in-name').value.trim(), phone: document.getElementById('in-phone').value, plan: document.getElementById('in-plan').value, pass: document.getElementById('in-pass').value, link: document.getElementById('in-link').value, start: document.getElementById('in-start').value, expiry: document.getElementById('in-expiry').value };
         if(!data.name || !data.expiry) return alert("أكمل البيانات!");
         if (idx === -1) fullData.clients.push(data); else fullData.clients[idx] = data;
         await syncToCloud(); renderClients(); closeModal();
     }
-    function copyClientUrl(n) { navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(n)}`); alert("تم نسخ الرابط"); }
+    function copyClientUrl(n) { navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(n)}`); alert("تم نسخ رابط العميل بنجاح"); }
     function editClient(i) { openModal(); document.getElementById('editIndex').value = i; ['name','phone','plan','pass','link','start','expiry'].forEach(id => document.getElementById('in-'+id).value = fullData.clients[i][id] || ''); }
     async function deleteClient(i) { if(confirm("حذف؟")) { fullData.clients.splice(i,1); await syncToCloud(); renderClients(); } }
     function openModal() { document.getElementById('editIndex').value = "-1"; document.getElementById('modal').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
     function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
     function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم النسخ!"); }
-    loadData();
-</script>
-</body>
-</html>
+  
