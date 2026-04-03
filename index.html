@@ -7,19 +7,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --primary: #4338ca; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --bg: #f1f5f9; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
         /* تصميم الشعار والأخبار */
-        .brand-logo { width: 120px; height: auto; margin-bottom: 10px; border-radius: 20px; }
-        .news-bar { background: #fff; width: 100%; max-width: 420px; padding: 8px; border-radius: 50px; margin-bottom: 15px; border: 1px solid #e2e8f0; font-size: 0.85rem; color: var(--primary); overflow: hidden; }
+        .brand-logo { width: 150px; height: auto; margin-bottom: 10px; border-radius: 20px; }
+        .news-bar { background: #fff; width: 100%; max-width: 420px; padding: 8px; border-radius: 50px; margin-bottom: 15px; border: 1px solid #e2e8f0; font-size: 0.85rem; color: var(--primary); overflow: hidden; display: none; }
 
         /* حالة الاشتراك */
-        .status-badge { width: 100%; padding: 8px; text-align: center; font-weight: bold; font-size: 0.9rem; color: white; border-radius: 12px 12px 0 0; }
+        .status-badge { width: 100%; padding: 10px; text-align: center; font-weight: bold; font-size: 0.9rem; color: white; border-radius: 12px 12px 0 0; }
         .status-active { background: var(--success); }
         .status-expired { background: var(--danger); }
 
         /* بطاقة العميل */
-        .client-card { background: white; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); width: 100%; max-width: 420px; overflow: hidden; display: none; }
+        .client-card { background: white; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); width: 100%; max-width: 420px; overflow: hidden; display: none; margin-bottom: 20px; }
         .card-header { background: #fff; padding: 20px; text-align: center; border-bottom: 1px solid #f1f5f9; }
         .card-header h2 { margin: 5px 0; color: #1e293b; font-size: 1.3rem; }
         
@@ -36,30 +36,38 @@
         .unit span { font-size: 0.6rem; color: #94a3b8; }
 
         /* أزرار الخدمات */
-        .services-grid { width: 100%; max-width: 420px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .services-grid { width: 100%; max-width: 420px; display: none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
         .btn-service { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 0.85rem; color: white; transition: 0.3s; }
         .btn-store { background: var(--primary); grid-column: 1 / -1; flex-direction: row; gap: 10px; }
         .btn-wa { background: #25d366; }
         .btn-channel { background: #008069; }
         
-        /* لوحة التحكم */
-        #adminArea { width: 100%; max-width: 1000px; display: none; }
-        .copy-btn { color: var(--primary); cursor: pointer; padding: 5px; }
+        /* رسالة الترحيب العامة */
+        .welcome-msg { text-align: center; padding: 40px 20px; background: white; border-radius: 24px; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        .copy-btn { color: var(--primary); cursor: pointer; padding: 5px; transition: 0.2s; }
+        .copy-btn:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
 
-    <img src="https://abonaoaf.github.io/apps/hdh.PNG" class="brand-logo" alt="Logo">
+    <img src="https://abonaoaf.github.io/apps/hdh.PNG" class="brand-logo" alt="قبل الحدث">
 
-    <div id="newsBar" class="news-bar" style="display:none;">
+    <div id="newsBar" class="news-bar">
         <marquee id="newsText" behavior="scroll" direction="right">مرحباً بك في منصة قبل الحدث التقنية..</marquee>
+    </div>
+
+    <div id="noUserMsg" class="welcome-msg" style="display:none;">
+        <i class="fas fa-user-shield fa-3x" style="color: var(--primary); margin-bottom: 15px;"></i>
+        <h2>منصة قبل الحدث</h2>
+        <p style="color: #64748b;">فضلاً استخدم الرابط الخاص بك للوصول لبيانات اشتراكك.</p>
     </div>
 
     <div id="clientView" class="client-card">
         <div id="statusBadge" class="status-badge">جاري التحقق...</div>
         <div class="card-header">
             <h2 id="v-name"></h2>
-            <span id="v-phone" style="color:#64748b; font-size:0.8rem;"></span>
+            <div id="v-expiry-date" style="color:#64748b; font-size:0.8rem; margin-top:5px;"></div>
         </div>
         <div class="info-grid">
             <div class="info-item">
@@ -82,47 +90,52 @@
         </div>
     </div>
 
-    <div id="servicesArea" class="services-grid" style="display:none;">
-        <a href="https://abonaoaf.github.io/apps/" class="btn-service btn-store">
+    <div id="servicesArea" class="services-grid">
+        <a href="apps.html" class="btn-service btn-store">
             <i class="fas fa-store"></i> متجر تطبيقات قبل الحدث
         </a>
         <a href="https://wa.me/966594393012" class="btn-service btn-wa">
             <i class="fab fa-whatsapp"></i> الدعم الفني
         </a>
-        <a href="https://whatsapp.com/channel/..." class="btn-service btn-channel">
+        <a href="https://whatsapp.com/channel/0029VaZ8C1B60eBo6O8K6Y1C" class="btn-service btn-channel">
             <i class="fas fa-bullhorn"></i> قناة الواتساب
         </a>
     </div>
 
-    <div id="adminArea">
-        </div>
-
 <script>
     const BIN_ID = '69ccd25636566621a86b0b49';
     const API_KEY = '$2a$10$tF3fZ9rbdTzLIljwr83BlOtuLCKngwBUbeK9//NpVH8Mwkfh4GTmu';
-    let fullData = { clients: [], apps: [], news: "مرحباً بك في منصة قبل الحدث!" };
+    let fullData = { clients: [], apps: [], news: "" };
 
     async function init() {
+        const params = new URLSearchParams(window.location.search);
+        const userName = params.get('user');
+
+        if (!userName) {
+            document.getElementById('noUserMsg').style.display = 'block';
+            return;
+        }
+
         try {
-            // جلب البيانات من السحابة
-            const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: { 'X-Master-Key': API_KEY } });
+            const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { 
+                headers: { 'X-Master-Key': API_KEY } 
+            });
             const data = await res.json();
             fullData = data.record;
 
-            const params = new URLSearchParams(window.location.search);
-            const user = params.get('user');
-
-            if (user) {
-                showClient(decodeURIComponent(user));
-            } else {
-                // إظهار لوحة التحكم (كود الإدارة هنا)
-            }
-        } catch (e) { alert("خطأ في الاتصال"); }
+            showClient(decodeURIComponent(userName));
+        } catch (e) { 
+            console.error("Connection Error");
+        }
     }
 
     function showClient(name) {
         const c = fullData.clients.find(x => x.name === name);
-        if (!c) return;
+        if (!c) {
+            document.getElementById('noUserMsg').innerHTML = "<h2>العميل غير موجود</h2><p>تأكد من الاسم الصحيح</p>";
+            document.getElementById('noUserMsg').style.display = 'block';
+            return;
+        }
 
         document.getElementById('clientView').style.display = 'block';
         document.getElementById('servicesArea').style.display = 'grid';
@@ -132,7 +145,8 @@
         document.getElementById('v-user').innerText = c.plan;
         document.getElementById('v-pass').innerText = c.pass;
         document.getElementById('v-host').innerText = c.link || "سيرفر خاص";
-        document.getElementById('newsText').innerText = fullData.news || "مرحباً بك في المنصة";
+        document.getElementById('v-expiry-date').innerText = "تاريخ النهاية: " + (c.expiry || "غير محدد");
+        document.getElementById('newsText').innerText = fullData.news || "مرحباً بك في منصة قبل الحدث التقنية..";
 
         updateStatus(c.expiry);
         setInterval(() => { updateTimer(c.expiry); }, 1000);
@@ -142,7 +156,7 @@
         const isExpired = new Date(expiry) < new Date();
         const badge = document.getElementById('statusBadge');
         if (isExpired) {
-            badge.innerText = "الاشتراك منتهي (يرجى التجديد)";
+            badge.innerText = "الاشتراك منتهي (يرجى التجديد) ⚠️";
             badge.className = "status-badge status-expired";
         } else {
             badge.innerText = "اشتراكك ساري ومفعّل ✅";
@@ -152,7 +166,10 @@
 
     function updateTimer(expiry) {
         const diff = new Date(expiry) - new Date();
-        if (diff <= 0) { document.getElementById('timer').innerHTML = "منتهي"; return; }
+        if (diff <= 0) { 
+            document.getElementById('timer').innerHTML = "<b style='color:red'>منتهي الصلاحية</b>"; 
+            return; 
+        }
         
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
@@ -168,12 +185,13 @@
     }
 
     function copyText(id) {
-        navigator.clipboard.writeText(document.getElementById(id).innerText);
-        alert("تم النسخ بنجاح");
+        const text = document.getElementById(id).innerText;
+        navigator.clipboard.writeText(text);
+        // تغيير شكل الأيقونة لحظياً للتأكيد
+        alert("تم نسخ: " + text);
     }
 
     init();
 </script>
 </body>
 </html>
-
