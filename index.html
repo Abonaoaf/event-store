@@ -55,7 +55,6 @@
         .btn-add { background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; }
         .logo-uploader { background: #f0f7ff; padding: 10px; border-radius: 12px; border: 1px dashed var(--primary); display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; }
         
-        /* شريط تقدم مصغر للوحة الإدارة */
         .admin-progress-container { width: 100%; height: 6px; background: var(--danger); border-radius: 10px; margin: 8px 0; overflow: hidden; }
         .admin-progress-fill { height: 100%; background: var(--success); float: right; transition: width 0.5s; }
 
@@ -84,7 +83,7 @@
         <div class="brand-container">
             <div class="brand-logo">
                 <img id="v-logo" style="width:100%; height:100%; object-fit:contain; display:none;">
-                <i id="v-icon" class="fas fa-user-shield fa-3x" style="color:#ddd"></i>
+                <i id="v-icon" class="fas fa-user-shield fa-4x" style="color:#ddd"></i>
             </div>
             <div class="date-box">
                 <span class="date-day-name" id="v-today-name"></span>
@@ -103,9 +102,11 @@
         <div class="info-row"><div><span class="label">اسم المستخدم</span><br><span id="v-plan" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-plan')"><i class="far fa-copy"></i></button></div>
         <div class="info-row"><div><span class="label">كلمة السر</span><br><span id="v-pass" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-pass')"><i class="far fa-copy"></i></button></div>
         <div class="timer-section"><span class="label">الوقت المتبقي للانتهاء</span><div id="timer" class="timer-display"></div></div>
-        <a href="https://abonaoaf.github.io/az/" class="btn-contact" style="background: #4338ca; border: 2px solid #fff;">
+        
+        <a id="v-link" href="#" class="btn-contact" style="background: #4338ca; border: 2px solid #fff;">
             <i class="fas fa-th-large"></i> متجر تطبيقات فولتشر 
         </a>
+        
         <a href="https://wa.me/966594393012" class="btn-contact" style="background:var(--whatsapp);" target="_blank"><i class="fab fa-whatsapp"></i> الدعم الفني المباشر</a>
         <a href="https://whatsapp.com/channel/0029VaFYcHcAO7RGw0O0QM1E" class="btn-contact" style="background:var(--channel);" target="_blank"><i class="fas fa-bullhorn"></i> تابعنا على قناة قبل الحدث</a>
     </div>
@@ -208,6 +209,14 @@
         document.getElementById('v-pass').innerText = c.pass;
         document.getElementById('v-start').innerText = c.start;
         document.getElementById('v-end').innerText = c.expiry;
+        
+        // ربط الرابط من لوحة التحكم بالزر عند العميل
+        const linkBtn = document.getElementById('v-link');
+        if (c.link) {
+            linkBtn.href = c.link;
+            linkBtn.target = "_blank";
+        }
+
         updateStatusAndProgress(c.start, c.expiry);
         if (!window.timerInterval) {
             window.timerInterval = setInterval(() => { 
@@ -300,14 +309,4 @@
         });
     }
 
-    async function deleteClient(i) { if(confirm("هل أنت متأكد من الحذف؟")) { fullData.clients.splice(i,1); await syncToCloud(); renderClients(); } }
-    function openModal() { document.getElementById('editIndex').value = "-1"; document.getElementById('modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
-    function showLoading(s) { document.getElementById('loading').style.display = s ? 'flex' : 'none'; }
-    function copyTag(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("تم النسخ!"); }
-
-    loadData();
-    setInterval(loadData, 300000);
-</script>
-</body>
-</html>
+    async 
