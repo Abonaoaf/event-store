@@ -29,10 +29,10 @@
         .date-day-name { font-size: 0.65rem; color: var(--danger); font-weight: bold; }
         .date-num { font-size: 1.6rem; font-weight: 900; color: #333; line-height: 1.1; }
         .date-month { font-size: 0.75rem; color: #666; font-weight: 600; }
+        
         #v-name { margin: 10px 0 0 0; color: black; font-weight: 800; font-size: 1.4rem; }
 
         .welcome-msg { margin-top: 15px; font-size: 0.95rem; color: #4a5568; line-height: 1.6; }
-        /* تم تعديل اللون والتباعد هنا */
         .welcome-family { font-weight: 800; color: #ff0000; display: block; margin-bottom: 20px; font-size: 1.1rem; }
         .dashboard-title { margin-top: 15px; display: block; font-weight: bold; color: var(--primary); font-size: 0.9rem; text-decoration: underline; }
 
@@ -89,9 +89,10 @@
                 <span class="date-month" id="v-today-month"></span>
             </div>
         </div>
-        <h2 id="v-name"></h2>
         
-        <div class="welcome-msg🤝">
+        <h2 id="v-name-container">مرحباً بك معنا 🤝 <span id="v-name"></span></h2>
+        
+        <div class="welcome-msg">
             <span class="welcome-family">في أسرة فولتشر</span>
             نحن سعداء بانضمامك إلينا ونتطلع لخدمتك بأفضل ما لدينا
             <span class="dashboard-title">لوحة معلوماتك الشخصية</span>
@@ -215,7 +216,9 @@
             document.getElementById('v-icon').style.display = 'none';
         }
         
-        document.getElementById('v-name').innerText = "مرحباً بك معنا " + c.name;
+        // تعديل هنا لعرض الاسم داخل الـ span الخاص به فقط
+        document.getElementById('v-name').innerText = c.name;
+        
         document.getElementById('v-phone').innerText = c.phone || 'غير مسجل';
         document.getElementById('v-plan').innerText = c.plan;
         document.getElementById('v-pass').innerText = c.pass;
