@@ -18,24 +18,21 @@
         }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; color: var(--text); }
         
-        /* تنسيق رأس البطاقة مع الشعار الجديد */
         .client-header { 
             background: linear-gradient(135deg, var(--primary), #0056b3); 
             color: white; 
-            padding: 15px 25px 25px 25px; /* تم تعديل التباعد ليناسب الشعار */
+            padding: 15px 25px 25px 25px; 
             text-align: center; 
             position: relative;
         }
         
-        /* تنسيق شعار قبل الحدث */
         .brand-logo {
-            max-width: 150px; /* التحكم في عرض الشعار */
+            max-width: 150px;
             height: auto;
             display: block;
-            margin: 0 auto 10px auto; /* تمركز الشعار وإضافة هامش سفلي */
+            margin: 0 auto 10px auto;
         }
         
-        /* تنسيق شريط الحالة البصري */
         .status-bar {
             height: 6px;
             width: 100%;
@@ -97,28 +94,20 @@
 
 <div id="clientView" class="client-view">
     <div id="v-status-bar" class="status-bar"></div>
-    
     <div class="client-header">
-        <img src="https://lh3.googleusercontent.com/d/1XfH_fK6kLp5F_y0Y7iV84b1V_N57YmB4" alt="لوغو قبل الحدث" class="brand-logo">
-        
+        <img src="https://lh3.googleusercontent.com/d/15m_4Abe_L1O637GvCbeH_e_p89lB5aV_" alt="لوغو قبل الحدث" class="brand-logo">
         <h2 id="v-name" style="margin:0; font-size: 1.2rem;"></h2>
     </div>
     
     <div class="info-body">
         <center><div id="v-status-text" class="status-msg"></div></center>
-        
         <div class="info-row"><div><span class="label">تاريخ البداية</span><br><span class="value" id="v-start"></span></div></div>
         <div class="info-row"><div><span class="label">تاريخ النهاية</span><br><span class="value" id="v-end"></span></div></div>
         <div class="info-row"><div><span class="label">الجوال</span><br><span id="v-phone" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-phone')"><i class="far fa-copy"></i></button></div>
         <div class="info-row"><div><span class="label">اسم المستخدم</span><br><span id="v-plan" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-plan')"><i class="far fa-copy"></i></button></div>
         <div class="info-row"><div><span class="label">كلمة السر</span><br><span id="v-pass" class="value"></span></div><button class="copy-btn" onclick="copyTag('v-pass')"><i class="far fa-copy"></i></button></div>
-        
         <div class="timer-section"><span class="label">الوقت المتبقي للانتهاء</span><div id="timer" class="timer-display"></div></div>
-        
-        <a href="https://abonaoaf.github.io/az/" class="btn-contact" style="background: #4338ca; border: 2px solid #fff;">
-            <i class="fas fa-th-large"></i> متجر تطبيقات فولتشر 
-        </a>
-        
+        <a href="https://abonaoaf.github.io/az/" class="btn-contact" style="background: #4338ca; border: 2px solid #fff;"><i class="fas fa-th-large"></i> متجر تطبيقات فولتشر </a>
         <a href="https://wa.me/966594393012" class="btn-contact" style="background:var(--whatsapp);" target="_blank"><i class="fab fa-whatsapp"></i> الدعم الفني المباشر</a>
         <a href="https://whatsapp.com/channel/0029VaFYcHcAO7RGw0O0QM1E" class="btn-contact" style="background:var(--channel);" target="_blank"><i class="fas fa-bullhorn"></i> تابعنا على قناة قبل الحدث</a>
     </div>
@@ -154,16 +143,13 @@
     async function loadData() {
         const isInitialLoad = !document.getElementById('clientView').style.display && !document.getElementById('adminPanel').style.display;
         if (isInitialLoad) showLoading(true);
-
         try {
             const response = await fetch(DB_URL);
             const data = await response.json();
             fullData.clients = data?.clients || [];
             fullData.apps = data?.apps || [];
-
             const user = params.get('user');
             const admin = params.get('admin');
-
             if (user) { 
                 updateClientViewOnly(decodeURIComponent(user));
             } else if (admin === ADMIN_KEY) { 
@@ -182,7 +168,6 @@
             document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>المشترك غير موجود</h1></div>";
             return;
         }
-        
         document.getElementById('clientView').style.display = 'block';
         document.getElementById('v-name').innerText = "مرحباً: " + c.name;
         document.getElementById('v-phone').innerText = c.phone || 'غير مسجل';
@@ -190,10 +175,7 @@
         document.getElementById('v-pass').innerText = c.pass;
         document.getElementById('v-start').innerText = c.start;
         document.getElementById('v-end').innerText = c.expiry;
-
-        // تحديث شريط الحالة البصري
         updateStatusUI(c.expiry);
-
         if (!window.timerInterval) {
             window.timerInterval = setInterval(() => { 
                 document.getElementById('timer').innerHTML = getTimeHTML(calculateTime(c.expiry)); 
@@ -201,13 +183,11 @@
         }
     }
 
-    // وظيفة تحديث الألوان والرسائل بناءً على تاريخ الانتهاء
     function updateStatusUI(expiry) {
         const diff = new Date(expiry).getTime() - new Date().getTime();
         const daysLeft = diff / (1000 * 60 * 60 * 24);
         const bar = document.getElementById('v-status-bar');
         const text = document.getElementById('v-status-text');
-
         if (diff <= 0) {
             bar.style.backgroundColor = "var(--danger)";
             text.innerText = "❌ اشتراك منتهي";
@@ -228,9 +208,7 @@
 
     async function syncToCloud() {
         showLoading(true);
-        try {
-            await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) });
-        } catch (error) { alert("فشلت المزامنة!"); }
+        try { await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(fullData) }); } catch (error) { alert("فشلت المزامنة!"); }
         showLoading(false);
     }
 
